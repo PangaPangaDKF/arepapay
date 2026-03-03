@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🫓 ArepaPay
 
-## Getting Started
+> Obtén $ a tasa oficial con autocustodia, realiza pagos, participa y obtén incentivos.
+> Usando la tecnología de Avalanche para romper la barrera entre web0, web1, web2, web3 y todos los web.
+> **La arepa es venezolana. 🫓🇻🇪**
 
-First, run the development server:
+## ¿Qué es ArepaPay?
+App de pagos P2P en una subnet de Avalanche. Los usuarios pagan con USDT, 
+ganan tickets por cada transacción y participan en rifas de premios físicos 
+en comercios locales.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Stack
+- Solidity + Foundry
+- React + Vite (frontend)
+- Avalanche Subnet (Chain ID: 4321987)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Contratos
+| Contrato | Dirección |
+|----------|-----------|
+| ArepaToken | `0xa4dff80b4a1d748bf28bc4a271ed834689ea3407` |
+| MockUSDT | `0xe336d36faca76840407e6836d26119e1ece0a2b4` |
+| MerchantRegistry | `0x95ca0a568236fc7413cd2b794a7da24422c2bbb6` |
+| PaymentProcessor | `0x789a5fdac2b37fcd290fb2924382297a6ae65860` |
+| LiquidityManager | `0xe3573540ab8a1c4c754fd958dc1db39bbe81b208` |
+| RewardNFT | `0x8b3bc4270be2abbb25bc04717830bd1cc493a461` |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Estado
+- ✅ Fase 1: Contratos deployados en subnet local
+- 🚀 Fase 2: Frontend React (en desarrollo)
