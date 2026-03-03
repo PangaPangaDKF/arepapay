@@ -94,20 +94,18 @@ Wallet deployer (ewoq - solo desarrollo local):
 
 ## 🚧 EN QUÉ ESTOY AHORA
 
-**Tarea actual:** Preparar contratos para el frontend
+**Tarea actual:** Refactor RewardNFT.sol
 
-**Problema identificado:** `RewardNFT.sol` necesita refactor completo.
-El contrato actual es un ERC721 básico. Para el sistema de tickets necesita:
-1. Función `mint(address to)` que llame solo `PaymentProcessor` (no el owner)
-2. Función `burn(address from, uint256 amount)` para quemar tickets al entrar a rifas
-3. Mapping de balance de tickets por address (o usar ERC1155 en lugar de ERC721)
-4. Evento `TicketMinted(address indexed user, uint256 amount)`
-5. Evento `TicketBurned(address indexed user, uint256 amount)`
+**Contexto:** Repo limpio en ~/arepapay-clean/ — esta es la carpeta correcta.
+La carpeta ~/arepapay/ ya no se usa, ignorarla.
 
 **Siguiente paso concreto:**
-Reescribir `RewardNFT.sol` como contrato de tickets ERC1155 o con balance simple,
-luego redesployar todos los contratos y actualizar las direcciones aquí.
-
+Reescribir RewardNFT.sol como sistema de tickets simple (NO ERC721, NO ERC1155)
+con balance propio, así:
+1. mint(address to) — solo llamable por PaymentProcessor
+2. burn(address from, uint256 amount) — el usuario quema tickets para entrar a rifas
+3. balanceOf(address) — cuántos tickets tiene el usuario
+4. Eventos: TicketMinted y TicketBurned
 ---
 
 ## ⏳ LO QUE FALTA (en orden)
