@@ -83,12 +83,12 @@ ArepaPay es una app de pagos P2P venezolana que corre en una subnet de Avalanche
 
 | Contrato | Dirección |
 |----------|-----------|
-| ArepaToken (AREPA) | `0xa4dff80b4a1d748bf28bc4a271ed834689ea3407` |
-| MockUSDT | `0xe336d36faca76840407e6836d26119e1ece0a2b4` |
-| MerchantRegistry | `0x95ca0a568236fc7413cd2b794a7da24422c2bbb6` |
-| PaymentProcessor | `0x789a5fdac2b37fcd290fb2924382297a6ae65860` |
-| LiquidityManager | `0xe3573540ab8a1c4c754fd958dc1db39bbe81b208` |
-| RewardNFT | `0x8b3bc4270be2abbb25bc04717830bd1cc493a461` |
+| ArepaToken (AREPA) | `0xf5f1f185cf359dc48469e410aeb6983cd4dc5812` |
+| MockUSDT | `0x768af58e63775354938e9f3fedb764f601c038b4` |
+| MerchantRegistry | `0x97c0fe6ab595cbfd50ad3860da5b2017d8b35c2e` |
+| PaymentProcessor | `0xbbfce55ad100b5bed880083fce366120347af872` |
+| LiquidityManager | `0xc5812e2f22177682ad9731330814f0444ac23e9e` |
+| RewardTicket | `0xcb5bf91d236ebe6ef6ae57342570884234bd11cc` |
 
 ⚠️ Estas direcciones cambiarán después del redesploy con RewardNFT nuevo.
 
@@ -109,7 +109,9 @@ Wallet deployer (ewoq - solo desarrollo local):
 - [x] Repo limpio en ~/arepapay-clean/ subido a GitHub
 - [x] VS Code configurado con terminal integrada
 - [x] Sistema de contexto (este archivo) funcionando
-
+- [x] Refactor RewardNFT → RewardTicket
+- [x] Redesployar todos los contratos
+- [x] network.js creado con direcciones finales
 ---
 
 ## 🚧 EN QUÉ ESTOY AHORA
