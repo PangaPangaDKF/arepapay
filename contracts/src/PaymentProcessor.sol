@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./MerchantRegistry.sol";
+import { IERC20 }   from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { Ownable }  from "@openzeppelin/contracts/access/Ownable.sol";
+import { MerchantRegistry } from "./MerchantRegistry.sol";
 
 contract PaymentProcessor is Ownable {
     MerchantRegistry public registry;

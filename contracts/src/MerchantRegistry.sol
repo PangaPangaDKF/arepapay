@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MerchantRegistry is Ownable {
     struct Merchant {
@@ -19,7 +19,11 @@ contract MerchantRegistry is Ownable {
 
     function registerMerchant(string memory _name) external {
         require(bytes(merchants[msg.sender].name).length == 0, "Already registered");
-        merchants[msg.sender] = Merchant(_name, msg.sender, false);
+        merchants[msg.sender] = Merchant({
+            name:     _name,
+            wallet:   msg.sender,
+            verified: false
+        });
         emit MerchantRegistered(msg.sender, _name);
     }
 

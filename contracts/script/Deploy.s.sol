@@ -1,26 +1,28 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
-import "forge-std/Script.sol";
-import "src/ArepaToken.sol";
-import "src/MockUSDT.sol";
-import "src/MerchantRegistry.sol";
-import "src/PaymentProcessor.sol";
-import "src/LiquidityManager.sol";
-import "src/RewardNFT.sol";
+pragma solidity ^0.8.24;
+import { Script }           from "forge-std/Script.sol";
+import { ArepaToken }       from "src/ArepaToken.sol";
+import { MockUSDT }         from "src/MockUSDT.sol";
+import { MerchantRegistry } from "src/MerchantRegistry.sol";
+import { PaymentProcessor } from "src/PaymentProcessor.sol";
+import { LiquidityManager } from "src/LiquidityManager.sol";
+import { RewardTicket }     from "src/RewardNFT.sol";
 
 contract DeployScript is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        ArepaToken arepa = new ArepaToken();
-        MockUSDT usdt = new MockUSDT();
+        ArepaToken       arepa    = new ArepaToken();
+        MockUSDT         usdt     = new MockUSDT();
         MerchantRegistry registry = new MerchantRegistry();
-        RewardNFT nft = new RewardNFT();
-        
-        // Desplegamos los que dependen de otros
-        new PaymentProcessor(address(registry), address(usdt));
-        new LiquidityManager(address(usdt));
+        RewardTicket     ticket   = new RewardTicket();
+
+        PaymentProcessor processor = new PaymentProcessor(address(registry), address(usdt));
+        new LiquidityManager(address(usdt), address(arepa));
+
+        // Conectar RewardTicket con PaymentProcessor
+        ticket.setPaymentProcessor(address(processor));
 
         vm.stopBroadcast();
     }
