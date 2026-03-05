@@ -17,7 +17,7 @@ Cuando recibas este archivo:
 ---
 
 ## 🎯 IDENTIDAD DE MARCA
-
+cd ~/arepapay-clean
 **Bio oficial de X (Twitter):**
 > "Obtén $ a tasa oficial con autocustodia, realiza pagos, participa y obtén incentivos.
 > Usando la tecnología de Avalanche para romper la barrera entre web0, web1, web2, web3 y todos los web.
@@ -116,17 +116,12 @@ Wallet deployer (ewoq - solo desarrollo local):
 
 ## 🚧 EN QUÉ ESTOY AHORA
 
-**Tarea actual:** Refactor RewardNFT.sol
+## 🚧 EN QUÉ ESTOY AHORA
 
-**Por qué:** El contrato actual es un ERC721 básico que no sirve para tickets.
-Necesita ser un contrato simple con balance propio (NO ERC721, NO ERC1155).
+**Tarea actual:** Construir hooks/useWallet.js
 
-**Lo que necesita el nuevo contrato:**
-1. mint(address to) — solo llamable por PaymentProcessor, da 1 ticket
-2. burn(address from, uint256 amount) — el usuario quema tickets para entrar a rifas
-3. balanceOf(address) — cuántos tickets tiene el usuario
-4. setPaymentProcessor(address) — para conectar con PaymentProcessor
-5. Eventos: TicketMinted(address user) y TicketBurned(address user, uint256 amount)
+**Contexto:** Contratos listos y deployados. network.js creado.
+Siguiente paso: crear el hook que conecta la wallet del usuario a la app.
 
 **Después de escribir el contrato:**
 - Reemplazar ~/arepapay-clean/contracts/src/RewardNFT.sol con el nuevo
@@ -136,6 +131,8 @@ Necesita ser un contrato simple con balance propio (NO ERC721, NO ERC1155).
 ---
 
 ## ⏳ LO QUE FALTA (en orden)
+
+. En "LO QUE FALTA" cambia el ⬅️ del número 1 al número 5. estoy me lo respondio claude. ai que lo cambiara pero no lo hice porque ya esta echo
 
 | # | Tarea | Por qué |
 |---|-------|---------|
