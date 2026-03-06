@@ -112,14 +112,15 @@ Wallet deployer (ewoq - solo desarrollo local):
 - [x] Frontend movido a ~/arepapay-clean/frontend/
 - [x] useWallet.js con WalletConnect v2
 - [x] Pantalla de conexión con botón naranja
+- [x] Dashboard: balance USDT, tickets y botones de acción (Enviar, Recibir, Rifas)
 ---
 
 ## 🚧 EN QUÉ ESTOY AHORA
 
-**Tarea actual:** Construir Dashboard
+**Tarea actual:** Construir Enviar / Recibir + QR
 
-**Contexto:** Wallet conecta correctamente. 
-Siguiente: pantalla principal con balance USDT, tickets y botones de acción.
+**Contexto:** Dashboard listo. Muestra balance USDT y tickets leídos del contrato.
+Siguiente: pantalla de enviar USDT (llama PaymentProcessor), pantalla de recibir con QR.
 
 **Para levantar el frontend:**
 cd ~/arepapay-clean/frontend
@@ -133,8 +134,8 @@ npm run dev
 
 | # | Tarea | Por qué |
 |---|-------|---------|
-| 1 | ⬅️ Construir frontend: Dashboard | Pantalla principal |
-| 2 | Construir frontend: Pagar/Recibir + QR | Core del negocio |
+| 1 | ✅ Construir frontend: Dashboard | Pantalla principal |
+| 2 | ⬅️ Construir frontend: Pagar/Recibir + QR | Core del negocio |
 | 3 | Construir frontend: Rifas y Tickets | Sistema de recompensas |
 | 4 | Subir frontend a GitHub | Versionado |
 | 5 | Panel de comerciante (desktop) | Fase 3 |
