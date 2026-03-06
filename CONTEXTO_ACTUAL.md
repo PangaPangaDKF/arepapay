@@ -119,6 +119,7 @@ Wallet deployer (ewoq - solo desarrollo local):
 - [x] SendScreen: formulario → confirmación → éxito/error, llama usdt.transfer()
 - [x] ReceiveScreen: QR de dirección + botón copiar + instrucciones
 - [x] RafflesScreen: tickets disponibles, lista de rifas con progreso y botón participar
+- [x] PWA configurada: instalable desde Chrome móvil, manifest + service worker
 ---
 
 ## 🚧 EN QUÉ ESTOY AHORA
