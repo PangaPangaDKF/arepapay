@@ -118,11 +118,12 @@ Wallet deployer (ewoq - solo desarrollo local):
 - [x] Rediseño pixel RPG: PixelButton verde/naranja, paneles pergamino, BottomNav café, login
 - [x] SendScreen: formulario → confirmación → éxito/error, llama usdt.transfer()
 - [x] ReceiveScreen: QR de dirección + botón copiar + instrucciones
+- [x] RafflesScreen: tickets disponibles, lista de rifas con progreso y botón participar
 ---
 
 ## 🚧 EN QUÉ ESTOY AHORA
 
-**Tarea actual:** Construir Rifas y Tickets
+**Tarea actual:** Directorio de Comercios (placeholder funcional)
 
 **Contexto:** Dashboard listo. Muestra balance USDT y tickets leídos del contrato.
 Siguiente: pantalla de enviar USDT (llama PaymentProcessor), pantalla de recibir con QR.
@@ -142,7 +143,7 @@ npm run dev
 | 1 | ✅ Construir frontend: Dashboard | Pantalla principal |
 | 2 | ✅ Construir frontend: Enviar USDT | Core del negocio |
 | 2b | ✅ Construir frontend: Recibir + QR | Core del negocio |
-| 3 | ⬅️ Construir frontend: Rifas y Tickets | Sistema de recompensas |
+| 3 | ✅ Construir frontend: Rifas y Tickets | Sistema de recompensas |
 | 4 | Subir frontend a GitHub | Versionado |
 | 5 | Panel de comerciante (desktop) | Fase 3 |
 | 6 | Bridge custodial | Fase 4 |
