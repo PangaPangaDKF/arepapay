@@ -113,6 +113,8 @@ Wallet deployer (ewoq - solo desarrollo local):
 - [x] useWallet.js con WalletConnect v2
 - [x] Pantalla de conexión con botón naranja
 - [x] Dashboard: balance USDT, tickets y botones de acción (Enviar, Recibir, Rifas)
+- [x] Dashboard mejorado: balance AREPA, mobile-first, BottomNav, tap en balance
+- [x] DESIGN_SYSTEM.md creado (referencia de estilos permanente)
 ---
 
 ## 🚧 EN QUÉ ESTOY AHORA
