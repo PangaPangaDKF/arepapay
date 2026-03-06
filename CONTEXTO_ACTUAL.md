@@ -17,7 +17,7 @@ Cuando recibas este archivo:
 ---
 
 ## 🎯 IDENTIDAD DE MARCA
-cd ~/arepapay-clean
+
 **Bio oficial de X (Twitter):**
 > "Obtén $ a tasa oficial con autocustodia, realiza pagos, participa y obtén incentivos.
 > Usando la tecnología de Avalanche para romper la barrera entre web0, web1, web2, web3 y todos los web.
@@ -45,7 +45,6 @@ ArepaPay es una app de pagos P2P venezolana que corre en una subnet de Avalanche
 ---
 
 ## 📁 ESTRUCTURA DE CARPETAS (CORRECTA)
-
 ```
 ~/
 ├── arepapay-clean/                  ← ✅ CARPETA CORRECTA — usar siempre esta
@@ -54,23 +53,21 @@ ArepaPay es una app de pagos P2P venezolana que corre en una subnet de Avalanche
 │   │   │   ├── ArepaToken.sol       ✅ deployado
 │   │   │   ├── MockUSDT.sol         ✅ deployado
 │   │   │   ├── MerchantRegistry.sol ✅ deployado
-│   │   │   ├── PaymentProcessor.sol ✅ deployado (tiene evento PaymentSent)
+│   │   │   ├── PaymentProcessor.sol ✅ deployado
 │   │   │   ├── LiquidityManager.sol ✅ deployado
-│   │   │   └── RewardNFT.sol        ⚠️ deployado PERO necesita refactor
+│   │   │   └── RewardNFT.sol        ✅ refactorizado como RewardTicket
 │   │   └── script/
 │   │       └── Deploy.s.sol         ✅ funciona
-│   ├── CONTEXTO_ACTUAL.md           ← este archivo
+│   ├── frontend/                    ← ✅ App React + Vite
+│   │   └── src/
+│   │       ├── App.jsx              ✅ pantalla de conexión lista
+│   │       ├── hooks/useWallet.js   ✅ WalletConnect v2
+│   │       └── config/network.js   ✅ direcciones de contratos
+│   ├── CONTEXTO_ACTUAL.md
 │   ├── README.md
 │   └── .gitignore
 │
-├── arepapay/                        ← ❌ IGNORAR — carpeta vieja y desordenada
-└── arepapay-frontend/               ← Frontend React + Vite (local, aún no en GitHub)
-    └── src/
-        ├── App.jsx                  ← solo template default, sin modificar
-        ├── main.jsx
-        └── index.css
-```
-
+└── arepapay-frontend/               ← ❌ IGNORAR (copia vieja)
 ---
 
 ## 🌐 RED Y CONTRATOS
@@ -112,41 +109,36 @@ Wallet deployer (ewoq - solo desarrollo local):
 - [x] Refactor RewardNFT → RewardTicket
 - [x] Redesployar todos los contratos
 - [x] network.js creado con direcciones finales
+- [x] Frontend movido a ~/arepapay-clean/frontend/
+- [x] useWallet.js con WalletConnect v2
+- [x] Pantalla de conexión con botón naranja
 ---
 
 ## 🚧 EN QUÉ ESTOY AHORA
 
-## 🚧 EN QUÉ ESTOY AHORA
+**Tarea actual:** Construir Dashboard
 
-**Tarea actual:** Construir hooks/useWallet.js
+**Contexto:** Wallet conecta correctamente. 
+Siguiente: pantalla principal con balance USDT, tickets y botones de acción.
 
-**Contexto:** Contratos listos y deployados. network.js creado.
-Siguiente paso: crear el hook que conecta la wallet del usuario a la app.
-
-**Después de escribir el contrato:**
-- Reemplazar ~/arepapay-clean/contracts/src/RewardNFT.sol con el nuevo
-- Actualizar Deploy.s.sol si es necesario
-- Redesployar y actualizar direcciones en este archivo
+**Para levantar el frontend:**
+cd ~/arepapay-clean/frontend
+npm run dev
 
 ---
 
 ## ⏳ LO QUE FALTA (en orden)
 
-. En "LO QUE FALTA" cambia el ⬅️ del número 1 al número 5. estoy me lo respondio claude. ai que lo cambiara pero no lo hice porque ya esta echo
+
 
 | # | Tarea | Por qué |
 |---|-------|---------|
-| 1 | ⬅️ Refactor RewardNFT → sistema de tickets | Sin esto el frontend no puede dar/quemar tickets |
-| 2 | Redesployar contratos | Aplicar cambios on-chain |
-| 3 | Actualizar direcciones en este archivo | Mantener contexto sincronizado |
-| 4 | Construir frontend: config/network.js | Base de toda la app |
-| 5 | Construir frontend: hooks/useWallet.js | Conectar wallet y agregar red |
-| 6 | Construir frontend: Dashboard | Pantalla principal |
-| 7 | Construir frontend: Pagar/Recibir + QR | Core del negocio |
-| 8 | Construir frontend: Rifas y Tickets | Sistema de recompensas |
-| 9 | Subir frontend a GitHub | Versionado |
-| 10 | Panel de comerciante (desktop) | Fase 3 |
-| 11 | Bridge custodial | Fase 4 |
+| 1 | ⬅️ Construir frontend: Dashboard | Pantalla principal |
+| 2 | Construir frontend: Pagar/Recibir + QR | Core del negocio |
+| 3 | Construir frontend: Rifas y Tickets | Sistema de recompensas |
+| 4 | Subir frontend a GitHub | Versionado |
+| 5 | Panel de comerciante (desktop) | Fase 3 |
+| 6 | Bridge custodial | Fase 4 |
 
 ---
 
@@ -171,11 +163,11 @@ export PRIVATE_KEY=0x56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558
 export RPC_URL=http://127.0.0.1:9650/ext/bc/V9NDW69xy4W7PVdCggpHN2VFZEn1VCXNDgez9GbQpRwo9p2gn/rpc
 
 # 3. Redesployar contratos
-cd ~/arepapay-clean/contracts
+cd ~/arepapay-clean/frontend
 forge script script/Deploy.s.sol:DeployScript --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast --legacy
 
 # 4. Levantar frontend
-cd ~/arepapay-frontend
+cd ~/arepapay-clean/frontend
 npm run dev
 
 # 5. Git — guardar progreso
