@@ -3,6 +3,7 @@ import { useBalances } from "../hooks/useBalances";
 import BottomNav from "./BottomNav";
 import PixelButton from "./PixelButton";
 import SendScreen from "./SendScreen";
+import ReceiveScreen from "./ReceiveScreen";
 
 const panel = {
   background: "#F0DCA0",
@@ -82,8 +83,16 @@ export default function Dashboard({ address, disconnect, provider }) {
         />
       )}
 
+      {/* PANTALLA RECIBIR */}
+      {activeTab === "receive" && (
+        <ReceiveScreen
+          address={address}
+          onBack={() => setActiveTab("home")}
+        />
+      )}
+
       {/* BODY PRINCIPAL */}
-      {activeTab !== "send" && <div style={{ padding: "16px" }}>
+      {activeTab !== "send" && activeTab !== "receive" && <div style={{ padding: "16px" }}>
 
         {/* PANEL BALANCE USDT — tappable */}
         <div style={{
@@ -202,7 +211,7 @@ export default function Dashboard({ address, disconnect, provider }) {
         </div>
 
         {/* PLACEHOLDER — pantallas aún no construidas */}
-        {(activeTab === "receive" || activeTab === "merchants" || activeTab === "raffles") && (
+        {(activeTab === "merchants" || activeTab === "raffles") && (
           <div style={panel}>
             <div style={panelHeader}>
               <span style={{ color: "#2C1A0E", fontSize: "12px", fontWeight: "bold", textTransform: "uppercase" }}>
@@ -211,7 +220,6 @@ export default function Dashboard({ address, disconnect, provider }) {
             </div>
             <div style={{ ...panelBody, textAlign: "center" }}>
               <p style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "16px", margin: "0 0 14px 0" }}>
-                {activeTab === "receive"   && "📥 Recibir + QR"}
                 {activeTab === "merchants" && "🏪 Directorio de Comercios"}
                 {activeTab === "raffles"   && "🎰 Rifas y Premios"}
               </p>
