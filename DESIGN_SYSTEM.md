@@ -1,48 +1,57 @@
 # 🎨 DESIGN SYSTEM — ArepaPay
 > Archivo de referencia de diseño. Leer SIEMPRE antes de construir cualquier pantalla o componente.
-> Estilo: Pixel art venezolano — cálido, retro, inclusivo.
+> Estilo: Pixel art venezolano — RPG cálido, retro, inclusivo.
+> Referencias: imágenes de juego RPG pixel art con inventario y botones de torneo.
 
 ---
 
 ## 🎨 PALETA DE COLORES
 
 ```js
-// Fondos
-BG_CREAM:    "#F5F0E8"   // fondo principal — crema cálido
-BG_CARD:     "#F0E8D0"   // tarjetas secundarias
-BG_DARK:     "#1B2A6B"   // azul marino — header, nav, elementos primarios
+// Fondos — estilo pergamino/parchment del RPG
+BG_PARCHMENT:  "#F5E8C0"   // fondo principal — pergamino cálido
+BG_CARD:       "#E8D5A0"   // tarjetas y paneles
+BG_CARD_DARK:  "#D4B87A"   // borde interno de tarjetas
+BG_DARK:       "#2C1A0E"   // café oscuro — bordes gruesos, texto importante
+BG_PANEL:      "#F0DCA0"   // panel interior
 
-// Acción principal
-ORANGE:      "#D4842A"   // naranja arepa — balance, CTA principal
-ORANGE_DARK: "#8B5E3C"   // sombra del naranja
-
-// Acento venezolano
-YELLOW:      "#FFD100"   // bandera VE — amarillo
-RED:         "#CC0001"   // bandera VE — rojo
-BLUE_FLAG:   "#003087"   // bandera VE — azul
+// Botones verdes — EXACTAMENTE como los botones de torneo del RPG
+BTN_GREEN:      "#78C040"   // verde principal del botón
+BTN_GREEN_LIGHT:"#A8E060"   // highlight superior del botón
+BTN_GREEN_DARK: "#508020"   // verde oscuro — sombra inferior
+BTN_GREEN_SHADOW:"#3A5A10"  // sombra sólida bajo el botón
 
 // Texto
-TEXT_DARK:   "#1B2A6B"   // titulos, valores importantes
-TEXT_MID:    "#6B5B45"   // etiquetas, subtitulos
-TEXT_LIGHT:  "#A0B0E0"   // texto sobre fondo oscuro
+TEXT_DARK:   "#2C1A0E"   // café oscuro — todo texto principal
+TEXT_MID:    "#6B4A2A"   // café medio — subtítulos
+TEXT_LIGHT:  "#F5E8C0"   // crema — texto sobre fondos oscuros/verdes
+
+// Acento venezolano
+ORANGE:      "#D4842A"   // naranja arepa — balance principal
+ORANGE_DARK: "#8B5E3C"   // sombra naranja
+YELLOW:      "#FFD100"   // bandera VE
+RED_VE:      "#CC0001"   // bandera VE
 
 // Estados
-SUCCESS:     "#2D7A3A"
+SUCCESS:     "#78C040"   // mismo verde del botón
 ERROR:       "#CC2222"
 ```
 
 ---
 
-## 📐 ESPACIADO Y BORDES
+## 📐 ESPACIADO Y BORDES — ESTILO PIXEL RPG
 
 ```js
-// La app es MOBILE-FIRST — máximo 420px de ancho, centrado
-MAX_WIDTH:       "420px"
-BORDER_RADIUS:   "14px"   // tarjetas
-BORDER_RADIUS_SM: "8px"   // botones pequeños
-SHADOW:          "4px 4px 0px"  // sombra estilo pixel art — siempre sólida, sin blur
-PADDING_PAGE:    "0 20px"
-PADDING_CARD:    "20px 24px"
+// REGLA DE ORO: todos los bordes son SÓLIDOS y GRUESOS, sin blur
+MAX_WIDTH:        "420px"        // mobile-first
+BORDER_THICK:     "3px solid #2C1A0E"   // borde principal de tarjetas y botones
+BORDER_THIN:      "2px solid #2C1A0E"   // borde secundario
+BORDER_RADIUS_CARD: "10px"              // tarjetas y paneles
+BORDER_RADIUS_BTN:  "24px"             // botones pill como el RPG
+SHADOW_BTN:       "0 4px 0 #2C1A0E"    // sombra sólida ABAJO del botón (efecto 3D)
+SHADOW_CARD:      "4px 4px 0px #2C1A0E" // sombra sólida diagonal de tarjeta
+PADDING_PAGE:     "0 16px"
+PADDING_CARD:     "16px 20px"
 ```
 
 ---
@@ -51,46 +60,75 @@ PADDING_CARD:    "20px 24px"
 
 ```js
 FONT_FAMILY:   "Inter, sans-serif"
-FONT_TITLE:    { fontSize: "28px", fontWeight: "bold", letterSpacing: "2px" }
-FONT_BALANCE:  { fontSize: "42px", fontWeight: "bold" }
-FONT_LABEL:    { fontSize: "13px", textTransform: "uppercase", letterSpacing: "1px" }
-FONT_BODY:     { fontSize: "14px" }
-FONT_SMALL:    { fontSize: "12px" }
+FONT_TITLE:    { fontSize: "22px", fontWeight: "900", letterSpacing: "1px", color: "#2C1A0E" }
+FONT_BALANCE:  { fontSize: "38px", fontWeight: "bold", color: "#2C1A0E" }
+FONT_BTN:      { fontSize: "16px", fontWeight: "bold", color: "#2C1A0E" }
+FONT_LABEL:    { fontSize: "12px", textTransform: "uppercase", letterSpacing: "1px", color: "#6B4A2A" }
+FONT_SMALL:    { fontSize: "11px", color: "#6B4A2A" }
 ```
 
 ---
 
-## 🧩 COMPONENTES BASE
+## 🟢 BOTÓN PIXEL RPG (componente PixelButton)
 
-### Tarjeta principal (balance)
-- Fondo: ORANGE
-- Sombra: `4px 4px 0px #8B5E3C`
-- Texto valor: blanco, 42px, bold
-- Etiqueta: #FFD9A0 (crema anaranjado)
+Exactamente como los botones verdes de los screenshots de torneo:
 
-### Tarjeta secundaria (tickets, info)
-- Fondo: BG_CARD (#F0E8D0)
-- Sombra: `4px 4px 0px #C8B898`
-- Borde: ninguno
+```jsx
+// Botón primario — verde pill
+{
+  background: "linear-gradient(180deg, #A8E060 0%, #78C040 40%, #58A030 100%)",
+  border: "3px solid #2C1A0E",
+  borderRadius: "24px",
+  boxShadow: "0 4px 0 #2C1A0E",           // sombra sólida = efecto 3D
+  padding: "14px 24px",
+  color: "#2C1A0E",
+  fontWeight: "bold",
+  fontSize: "16px",
+  cursor: "pointer",
+  width: "100%",
+  textAlign: "center",
+  activeStyle: { transform: "translateY(2px)", boxShadow: "0 2px 0 #2C1A0E" }  // al presionar
+}
 
-### Botón primario
-- Fondo: BG_DARK (#1B2A6B)
-- Texto: blanco
-- Sombra: `3px 3px 0px #0D1A45`
-- Hover: transform scale(0.98)
+// Botón secundario — naranja arepa
+{
+  background: "linear-gradient(180deg, #F0A050 0%, #D4842A 40%, #A06020 100%)",
+  border: "3px solid #2C1A0E",
+  borderRadius: "24px",
+  boxShadow: "0 4px 0 #2C1A0E",
+}
+```
 
-### Botón acción (grid 2x2)
-- Fondo: blanco o BG_DARK
-- Borde: `2px solid #E8DCC8`
-- Sombra: `3px 3px 0px #C8B898`
-- Emoji grande + label abajo
+---
 
-### Navegación inferior (BottomNav)
-- Fondo: BG_DARK (#1B2A6B)
-- Íconos activos: ORANGE (#D4842A)
-- Íconos inactivos: TEXT_LIGHT (#A0B0E0)
-- Altura: 64px fija
-- 5 tabs: Inicio | Enviar | Recibir | Comercios | Rifas
+## 🧩 PANELES / TARJETAS — ESTILO INVENTARIO RPG
+
+```jsx
+// Panel principal (como el panel de inventario)
+{
+  background: "#F0DCA0",
+  border: "3px solid #2C1A0E",
+  borderRadius: "10px",
+  boxShadow: "4px 4px 0px #2C1A0E",
+  padding: "16px 20px"
+}
+
+// Panel de balance (fondo naranja, estilo especial)
+{
+  background: "linear-gradient(180deg, #F0A050 0%, #D4842A 100%)",
+  border: "3px solid #2C1A0E",
+  borderRadius: "10px",
+  boxShadow: "4px 4px 0px #2C1A0E",
+}
+
+// Header de panel (título con fondo más oscuro)
+{
+  background: "#D4B87A",
+  borderBottom: "3px solid #2C1A0E",
+  padding: "10px 20px",
+  borderRadius: "8px 8px 0 0"
+}
+```
 
 ---
 
@@ -98,45 +136,35 @@ FONT_SMALL:    { fontSize: "12px" }
 
 ```
 +-------------------+
-|      HEADER       |  ← fijo arriba, BG_DARK
+|  HEADER (café)    |  ← sticky top, fondo BG_DARK con borde café
 +-------------------+
 |                   |
-|   CONTENIDO       |  ← scrollable, BG_CREAM
-|   (tarjetas,      |
-|    acciones)      |
+|  BG_PARCHMENT     |  ← scrollable, fondo pergamino
+|  tarjetas con     |
+|  borde café       |
 |                   |
 +-------------------+
-|    BOTTOM NAV     |  ← fijo abajo, BG_DARK, 64px
+|  BOTTOM NAV       |  ← fixed bottom, BG_DARK, borde top café
 +-------------------+
 ```
-
-**Regla importante:** La tarjeta de balance NO debe expandirse según el número — usar `min-width` fijo y fuente que no cambie el layout.
 
 ---
 
 ## 🫓 IDENTIDAD Y TONO
 
-- Logo: 🫓 (arepa emoji) — siempre presente en el header
-- Nombre: **AREPAPAY** en mayúsculas con letterSpacing
-- Tagline: "La arepa es venezolana. 🇻🇪"
-- Tono UI: venezolano, cercano, sin jerga crypto
-- Usar palabras como "Tu saldo", "Enviar", "Recibir" — nunca "wallet", "token", "gas"
-- Los tickets se llaman siempre 🎟️ Tickets o 🫓 Tickets
-
----
-
-## 🖼️ REFERENCIAS VISUALES
-- Pixel art: bordes sólidos, sombras sin blur, colores planos
-- Estilo como imagen de banner ArepaPay: texto bold azul marino sobre crema
-- Íconos pixel art de comida venezolana como referencia de paleta cálida
-- Checkered red/white como acento decorativo (no overuse)
+- Logo: 🫓 siempre presente
+- Nombre: **AREPAPAY** — bold, letterSpacing
+- Tono: venezolano, cercano, sin jerga crypto
+- Palabras clave UI: "Tu saldo", "Enviar", "Recibir" — nunca "wallet", "token", "gas"
+- Tickets → siempre 🎟️ Tickets
 
 ---
 
 ## 📋 CHECKLIST ANTES DE HACER UN COMPONENTE
-- [ ] ¿Funciona en 375px de ancho? (iPhone SE)
+
+- [ ] ¿Botones son pill verde con borde café y sombra sólida?
+- [ ] ¿Paneles tienen borde café grueso y sombra diagonal sólida?
+- [ ] ¿Fondo es pergamino (#F5E8C0)?
+- [ ] ¿Funciona en 375px (iPhone SE)?
 - [ ] ¿Los números no rompen el layout?
-- [ ] ¿Sombras son sólidas (sin blur)?
-- [ ] ¿El texto es legible en BG_CREAM y BG_DARK?
-- [ ] ¿Tiene bottom nav fijo?
-- [ ] ¿El header tiene logo 🫓 + AREPAPAY?
+- [ ] ¿Tiene BottomNav fijo?

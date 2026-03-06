@@ -1,5 +1,6 @@
 import { useWallet } from "./hooks/useWallet";
 import Dashboard from "./components/Dashboard";
+import PixelButton from "./components/PixelButton";
 
 export default function App() {
   const { address, provider, connected, connect, disconnect } = useWallet();
@@ -17,44 +18,70 @@ export default function App() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#F5F0E8",
+      background: "#F5E8C0",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
       fontFamily: "Inter, sans-serif",
-      padding: "20px"
+      padding: "20px",
+      maxWidth: "420px",
+      margin: "0 auto"
     }}>
-      <div style={{ fontSize: "64px", marginBottom: "8px" }}>🫓</div>
-      <h1 style={{
-        color: "#1B2A6B",
-        fontSize: "28px",
-        fontWeight: "bold",
-        margin: "0 0 8px 0",
-        letterSpacing: "2px"
-      }}>AREPAPAY</h1>
-      <p style={{
-        color: "#6B5B45",
-        fontSize: "14px",
-        marginBottom: "40px"
-      }}>La arepa es venezolana. 🇻🇪</p>
 
-      <button
-        onClick={connect}
-        style={{
-          background: "#D4842A",
-          color: "white",
-          border: "none",
-          borderRadius: "12px",
-          padding: "16px 40px",
-          fontSize: "16px",
-          fontWeight: "bold",
-          cursor: "pointer",
-          boxShadow: "4px 4px 0px #8B5E3C"
-        }}
-      >
-        🔌 Conectar Wallet
-      </button>
+      {/* Panel principal login */}
+      <div style={{
+        background: "#F0DCA0",
+        border: "3px solid #2C1A0E",
+        borderRadius: "10px",
+        boxShadow: "6px 6px 0px #2C1A0E",
+        width: "100%",
+        overflow: "hidden"
+      }}>
+        {/* Header panel */}
+        <div style={{
+          background: "#D4B87A",
+          borderBottom: "3px solid #2C1A0E",
+          padding: "12px 20px",
+          textAlign: "center"
+        }}>
+          <span style={{ fontSize: "40px" }}>🫓</span>
+        </div>
+
+        {/* Body */}
+        <div style={{ padding: "24px 20px", textAlign: "center" }}>
+          <h1 style={{
+            color: "#2C1A0E",
+            fontSize: "28px",
+            fontWeight: "900",
+            margin: "0 0 6px 0",
+            letterSpacing: "3px"
+          }}>
+            AREPAPAY
+          </h1>
+          <p style={{
+            color: "#6B4A2A",
+            fontSize: "13px",
+            margin: "0 0 28px 0"
+          }}>
+            La arepa es venezolana. 🇻🇪
+          </p>
+
+          <PixelButton variant="green" onClick={connect}>
+            🔌 Conectar Wallet
+          </PixelButton>
+
+          <p style={{
+            color: "#6B4A2A",
+            fontSize: "11px",
+            margin: "16px 0 0 0",
+            lineHeight: 1.5
+          }}>
+            Autocustodia · Red ArepaPay · Avalanche
+          </p>
+        </div>
+      </div>
+
     </div>
   );
 }

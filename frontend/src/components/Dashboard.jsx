@@ -1,10 +1,33 @@
 import { useState } from "react";
 import { useBalances } from "../hooks/useBalances";
 import BottomNav from "./BottomNav";
+import PixelButton from "./PixelButton";
+
+const panel = {
+  background: "#F0DCA0",
+  border: "3px solid #2C1A0E",
+  borderRadius: "10px",
+  boxShadow: "4px 4px 0px #2C1A0E",
+  overflow: "hidden",
+  marginBottom: "14px"
+};
+
+const panelHeader = {
+  background: "#D4B87A",
+  borderBottom: "3px solid #2C1A0E",
+  padding: "8px 16px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between"
+};
+
+const panelBody = {
+  padding: "14px 16px"
+};
 
 export default function Dashboard({ address, disconnect, provider }) {
   const { usdtBalance, arepaBalance, tickets, loading, refetch } = useBalances(provider, address);
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab]             = useState("home");
   const [showBalanceMenu, setShowBalanceMenu] = useState(false);
 
   const shortAddr = address
@@ -16,16 +39,16 @@ export default function Dashboard({ address, disconnect, provider }) {
       minHeight: "100vh",
       maxWidth: "420px",
       margin: "0 auto",
-      background: "#F5F0E8",
+      background: "#F5E8C0",
       fontFamily: "Inter, sans-serif",
-      position: "relative",
       paddingBottom: "80px"
     }}>
 
       {/* HEADER */}
       <div style={{
-        background: "#1B2A6B",
-        padding: "16px 20px",
+        background: "#2C1A0E",
+        borderBottom: "3px solid #0A0804",
+        padding: "12px 16px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -34,73 +57,66 @@ export default function Dashboard({ address, disconnect, provider }) {
         zIndex: 10
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <span style={{ fontSize: "26px" }}>🫓</span>
+          <span style={{ fontSize: "24px" }}>🫓</span>
           <div>
-            <p style={{ color: "white", fontWeight: "bold", fontSize: "16px", letterSpacing: "2px", margin: 0 }}>
+            <p style={{ color: "#F5E8C0", fontWeight: "900", fontSize: "16px", letterSpacing: "2px", margin: 0 }}>
               AREPAPAY
             </p>
-            <p style={{ color: "#A0B0E0", fontSize: "11px", margin: 0 }}>{shortAddr}</p>
+            <p style={{ color: "#A08060", fontSize: "11px", margin: 0 }}>{shortAddr}</p>
           </div>
         </div>
-        <button
-          onClick={disconnect}
-          style={{
-            background: "transparent",
-            border: "1px solid #A0B0E0",
-            borderRadius: "8px",
-            color: "#A0B0E0",
-            padding: "5px 12px",
-            fontSize: "12px",
-            cursor: "pointer"
-          }}
-        >
+        <PixelButton variant="ghost" onClick={disconnect} style={{ width: "auto", padding: "6px 14px", fontSize: "13px" }}>
           Salir
-        </button>
+        </PixelButton>
       </div>
 
-      {/* CONTENIDO */}
-      <div style={{ padding: "20px" }}>
+      {/* BODY */}
+      <div style={{ padding: "16px" }}>
 
-        {/* BALANCE USDT — tappable */}
-        <div
-          onClick={() => setShowBalanceMenu(v => !v)}
-          style={{
-            background: "#D4842A",
-            borderRadius: "16px",
-            padding: "24px 20px",
-            boxShadow: "4px 4px 0px #8B5E3C",
-            marginBottom: "12px",
-            cursor: "pointer",
-            userSelect: "none"
-          }}
-        >
-          <p style={{ color: "#FFD9A0", fontSize: "12px", textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 6px 0" }}>
-            Tu saldo
-          </p>
-          <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
-            <p style={{ color: "white", fontSize: "40px", fontWeight: "bold", margin: 0, lineHeight: 1 }}>
-              {loading ? "—" : usdtBalance}
-            </p>
-            <span style={{ color: "#FFD9A0", fontSize: "16px", fontWeight: "bold" }}>USDT</span>
+        {/* PANEL BALANCE USDT — tappable */}
+        <div style={{
+          background: "linear-gradient(180deg, #F0A050 0%, #D4842A 100%)",
+          border: "3px solid #2C1A0E",
+          borderRadius: "10px",
+          boxShadow: "4px 4px 0px #2C1A0E",
+          marginBottom: showBalanceMenu ? "0px" : "14px",
+          overflow: "hidden",
+          cursor: "pointer",
+          borderBottom: showBalanceMenu ? "none" : "3px solid #2C1A0E",
+          borderRadius: showBalanceMenu ? "10px 10px 0 0" : "10px"
+        }} onClick={() => setShowBalanceMenu(v => !v)}>
+          <div style={{ background: "#A06020", borderBottom: "3px solid #2C1A0E", padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ color: "#F5E8C0", fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "1px" }}>
+              Tu Saldo
+            </span>
+            <span style={{ color: "#F5E8C0", fontSize: "14px" }}>{showBalanceMenu ? "▲" : "▼"}</span>
           </div>
-          <p style={{ color: "#FFD9A0", fontSize: "11px", margin: "8px 0 0 0" }}>
-            Toca para opciones 👆
-          </p>
+          <div style={{ padding: "16px", textAlign: "center" }}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: "8px" }}>
+              <span style={{ color: "#2C1A0E", fontSize: "42px", fontWeight: "900", lineHeight: 1 }}>
+                {loading ? "—" : usdtBalance}
+              </span>
+              <span style={{ color: "#2C1A0E", fontSize: "18px", fontWeight: "bold" }}>USDT</span>
+            </div>
+            <p style={{ color: "#2C1A0E", fontSize: "11px", margin: "6px 0 0 0", opacity: 0.7 }}>
+              Toca para opciones 👆
+            </p>
+          </div>
         </div>
 
-        {/* MENÚ RÁPIDO AL TOCAR BALANCE */}
+        {/* MENÚ RÁPIDO */}
         {showBalanceMenu && (
           <div style={{
-            background: "white",
-            borderRadius: "14px",
-            border: "2px solid #E8DCC8",
-            boxShadow: "4px 4px 0px #C8B898",
-            marginBottom: "12px",
+            background: "#F0DCA0",
+            border: "3px solid #2C1A0E",
+            borderTop: "none",
+            borderRadius: "0 0 10px 10px",
+            marginBottom: "14px",
             overflow: "hidden"
           }}>
             {[
-              { emoji: "📤", label: "Enviar USDT",   tab: "send"    },
-              { emoji: "📥", label: "Recibir USDT",  tab: "receive" },
+              { emoji: "📤", label: "Enviar USDT",      tab: "send"    },
+              { emoji: "📥", label: "Recibir USDT",     tab: "receive" },
               { emoji: "🔄", label: "Actualizar saldo", action: refetch },
             ].map((item, i) => (
               <button
@@ -114,147 +130,89 @@ export default function Dashboard({ address, disconnect, provider }) {
                   width: "100%",
                   background: "transparent",
                   border: "none",
-                  borderBottom: i < 2 ? "1px solid #E8DCC8" : "none",
-                  padding: "14px 20px",
+                  borderBottom: i < 2 ? "2px solid #C4A870" : "none",
+                  padding: "13px 16px",
                   display: "flex",
                   alignItems: "center",
                   gap: "12px",
-                  cursor: "pointer",
-                  textAlign: "left"
+                  cursor: "pointer"
                 }}
               >
                 <span style={{ fontSize: "20px" }}>{item.emoji}</span>
-                <span style={{ color: "#1B2A6B", fontWeight: "600", fontSize: "14px" }}>{item.label}</span>
+                <span style={{ color: "#2C1A0E", fontWeight: "700", fontSize: "14px" }}>{item.label}</span>
               </button>
             ))}
           </div>
         )}
 
-        {/* BALANCE AREPA */}
-        <div style={{
-          background: "#F0E8D0",
-          borderRadius: "14px",
-          padding: "16px 20px",
-          boxShadow: "3px 3px 0px #C8B898",
-          marginBottom: "12px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between"
-        }}>
-          <div>
-            <p style={{ color: "#6B5B45", fontSize: "12px", textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 4px 0" }}>
-              Gas (AREPA)
-            </p>
-            <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-              <p style={{ color: "#1B2A6B", fontSize: "22px", fontWeight: "bold", margin: 0 }}>
-                {loading ? "—" : arepaBalance}
-              </p>
-              <span style={{ color: "#6B5B45", fontSize: "13px" }}>AREPA</span>
+        {/* AREPA + TICKETS */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "14px" }}>
+          {[
+            { label: "Gas", emoji: "🫓", value: loading ? "—" : arepaBalance, sub: "AREPA" },
+            { label: "Tickets", emoji: "🎟️", value: loading ? "—" : tickets, sub: "disponibles" },
+          ].map(item => (
+            <div key={item.label} style={{ ...panel, marginBottom: 0 }}>
+              <div style={panelHeader}>
+                <span style={{ color: "#2C1A0E", fontSize: "11px", fontWeight: "bold", textTransform: "uppercase" }}>{item.label}</span>
+                <span style={{ fontSize: "16px" }}>{item.emoji}</span>
+              </div>
+              <div style={panelBody}>
+                <p style={{ color: "#2C1A0E", fontSize: "22px", fontWeight: "900", margin: 0, lineHeight: 1 }}>
+                  {item.value}
+                </p>
+                <p style={{ color: "#6B4A2A", fontSize: "11px", margin: "4px 0 0 0" }}>{item.sub}</p>
+              </div>
             </div>
-          </div>
-          <span style={{ fontSize: "32px" }}>🫓</span>
-        </div>
-
-        {/* TICKETS */}
-        <div style={{
-          background: "#F0E8D0",
-          borderRadius: "14px",
-          padding: "16px 20px",
-          boxShadow: "3px 3px 0px #C8B898",
-          marginBottom: "20px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between"
-        }}>
-          <div>
-            <p style={{ color: "#6B5B45", fontSize: "12px", textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 4px 0" }}>
-              Mis Tickets
-            </p>
-            <p style={{ color: "#1B2A6B", fontSize: "28px", fontWeight: "bold", margin: 0 }}>
-              {loading ? "—" : tickets}
-            </p>
-          </div>
-          <span style={{ fontSize: "36px" }}>🎟️</span>
-        </div>
-
-        {/* ACCIONES RÁPIDAS */}
-        <p style={{ color: "#6B5B45", fontSize: "12px", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "12px" }}>
-          Acciones rápidas
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
-          {[
-            { emoji: "📤", label: "Enviar",   tab: "send",    dark: true  },
-            { emoji: "📥", label: "Recibir",  tab: "receive", dark: false },
-          ].map(btn => (
-            <button
-              key={btn.tab}
-              onClick={() => setActiveTab(btn.tab)}
-              style={{
-                background: btn.dark ? "#1B2A6B" : "white",
-                border: `2px solid ${btn.dark ? "#1B2A6B" : "#E8DCC8"}`,
-                borderRadius: "14px",
-                padding: "18px 12px",
-                textAlign: "center",
-                cursor: "pointer",
-                boxShadow: `3px 3px 0px ${btn.dark ? "#0D1A45" : "#C8B898"}`
-              }}
-            >
-              <div style={{ fontSize: "26px", marginBottom: "6px" }}>{btn.emoji}</div>
-              <p style={{ color: btn.dark ? "white" : "#1B2A6B", fontWeight: "600", fontSize: "14px", margin: 0 }}>
-                {btn.label}
-              </p>
-            </button>
-          ))}
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-          {[
-            { emoji: "🏪", label: "Comercios", tab: "merchants" },
-            { emoji: "🎰", label: "Rifas",     tab: "raffles"   },
-          ].map(btn => (
-            <button
-              key={btn.tab}
-              onClick={() => setActiveTab(btn.tab)}
-              style={{
-                background: "white",
-                border: "2px solid #E8DCC8",
-                borderRadius: "14px",
-                padding: "18px 12px",
-                textAlign: "center",
-                cursor: "pointer",
-                boxShadow: "3px 3px 0px #C8B898"
-              }}
-            >
-              <div style={{ fontSize: "26px", marginBottom: "6px" }}>{btn.emoji}</div>
-              <p style={{ color: "#1B2A6B", fontWeight: "600", fontSize: "14px", margin: 0 }}>
-                {btn.label}
-              </p>
-            </button>
           ))}
         </div>
 
-        {/* AVISO TAB ACTIVO (placeholders) */}
+        {/* ACCIONES — botones verdes RPG */}
+        <div style={panel}>
+          <div style={panelHeader}>
+            <span style={{ color: "#2C1A0E", fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "1px" }}>
+              Acciones
+            </span>
+          </div>
+          <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+            <PixelButton variant="green" onClick={() => setActiveTab("send")}>
+              📤 Enviar USDT
+            </PixelButton>
+            <PixelButton variant="green" onClick={() => setActiveTab("receive")}>
+              📥 Recibir / Mi QR
+            </PixelButton>
+            <PixelButton variant="ghost" onClick={() => setActiveTab("merchants")}>
+              🏪 Ver Comercios
+            </PixelButton>
+            <PixelButton variant="orange" onClick={() => setActiveTab("raffles")}>
+              🎰 Ver Rifas
+            </PixelButton>
+          </div>
+        </div>
+
+        {/* PLACEHOLDER pantallas */}
         {activeTab !== "home" && (
-          <div style={{
-            marginTop: "20px",
-            background: "#1B2A6B",
-            borderRadius: "14px",
-            padding: "20px",
-            textAlign: "center",
-            boxShadow: "4px 4px 0px #0D1A45"
-          }}>
-            <p style={{ color: "#A0B0E0", fontSize: "13px", margin: "0 0 4px 0" }}>Próximamente</p>
-            <p style={{ color: "white", fontWeight: "bold", fontSize: "16px", margin: 0 }}>
-              {activeTab === "send"      && "📤 Pantalla de Envío"}
-              {activeTab === "receive"   && "📥 Pantalla de Recibir + QR"}
-              {activeTab === "merchants" && "🏪 Directorio de Comercios"}
-              {activeTab === "raffles"   && "🎰 Rifas y Premios"}
-            </p>
+          <div style={panel}>
+            <div style={panelHeader}>
+              <span style={{ color: "#2C1A0E", fontSize: "12px", fontWeight: "bold", textTransform: "uppercase" }}>
+                Próximamente
+              </span>
+            </div>
+            <div style={{ ...panelBody, textAlign: "center" }}>
+              <p style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "16px", margin: "0 0 14px 0" }}>
+                {activeTab === "send"      && "📤 Pantalla de Envío"}
+                {activeTab === "receive"   && "📥 Recibir + QR"}
+                {activeTab === "merchants" && "🏪 Directorio de Comercios"}
+                {activeTab === "raffles"   && "🎰 Rifas y Premios"}
+              </p>
+              <PixelButton variant="ghost" onClick={() => setActiveTab("home")} style={{ fontSize: "13px", padding: "10px 20px" }}>
+                ← Volver
+              </PixelButton>
+            </div>
           </div>
         )}
 
       </div>
 
-      {/* BOTTOM NAV */}
       <BottomNav active={activeTab} onChange={setActiveTab} />
     </div>
   );

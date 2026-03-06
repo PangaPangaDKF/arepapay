@@ -15,10 +15,10 @@ export default function BottomNav({ active, onChange }) {
       transform: "translateX(-50%)",
       width: "100%",
       maxWidth: "420px",
-      background: "#1B2A6B",
+      background: "#2C1A0E",
+      borderTop: "3px solid #0A0804",
       display: "flex",
       height: "64px",
-      borderTop: "3px solid #0D1A45",
       zIndex: 100
     }}>
       {tabs.map(tab => {
@@ -29,35 +29,28 @@ export default function BottomNav({ active, onChange }) {
             onClick={() => onChange(tab.id)}
             style={{
               flex: 1,
-              background: "transparent",
+              background: isActive ? "#3E2510" : "transparent",
               border: "none",
+              borderTop: isActive ? "3px solid #78C040" : "3px solid transparent",
               cursor: "pointer",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
               gap: "2px",
-              padding: "8px 0"
+              padding: "6px 0",
+              transition: "background 0.1s"
             }}
           >
-            <span style={{ fontSize: "20px", lineHeight: 1 }}>{tab.emoji}</span>
+            <span style={{ fontSize: "18px", lineHeight: 1 }}>{tab.emoji}</span>
             <span style={{
               fontSize: "10px",
               fontWeight: isActive ? "bold" : "normal",
-              color: isActive ? "#D4842A" : "#A0B0E0",
+              color: isActive ? "#78C040" : "#A08060",
               fontFamily: "Inter, sans-serif"
             }}>
               {tab.label}
             </span>
-            {isActive && (
-              <div style={{
-                width: "4px",
-                height: "4px",
-                borderRadius: "50%",
-                background: "#D4842A",
-                marginTop: "1px"
-              }} />
-            )}
           </button>
         );
       })}

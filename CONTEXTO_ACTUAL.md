@@ -115,6 +115,7 @@ Wallet deployer (ewoq - solo desarrollo local):
 - [x] Dashboard: balance USDT, tickets y botones de acción (Enviar, Recibir, Rifas)
 - [x] Dashboard mejorado: balance AREPA, mobile-first, BottomNav, tap en balance
 - [x] DESIGN_SYSTEM.md creado (referencia de estilos permanente)
+- [x] Rediseño pixel RPG: PixelButton verde/naranja, paneles pergamino, BottomNav café, login
 ---
 
 ## 🚧 EN QUÉ ESTOY AHORA
