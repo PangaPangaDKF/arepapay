@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useBalances } from "../hooks/useBalances";
 import BottomNav from "./BottomNav";
 import PixelButton from "./PixelButton";
+import SendScreen from "./SendScreen";
 
 const panel = {
   background: "#F0DCA0",
@@ -70,8 +71,19 @@ export default function Dashboard({ address, disconnect, provider }) {
         </PixelButton>
       </div>
 
-      {/* BODY */}
-      <div style={{ padding: "16px" }}>
+      {/* PANTALLA ENVIAR */}
+      {activeTab === "send" && (
+        <SendScreen
+          provider={provider}
+          address={address}
+          usdtBalance={usdtBalance}
+          onBack={() => setActiveTab("home")}
+          onSuccess={() => { setActiveTab("home"); refetch(); }}
+        />
+      )}
+
+      {/* BODY PRINCIPAL */}
+      {activeTab !== "send" && <div style={{ padding: "16px" }}>
 
         {/* PANEL BALANCE USDT — tappable */}
         <div style={{
@@ -189,8 +201,8 @@ export default function Dashboard({ address, disconnect, provider }) {
           </div>
         </div>
 
-        {/* PLACEHOLDER pantallas */}
-        {activeTab !== "home" && (
+        {/* PLACEHOLDER — pantallas aún no construidas */}
+        {(activeTab === "receive" || activeTab === "merchants" || activeTab === "raffles") && (
           <div style={panel}>
             <div style={panelHeader}>
               <span style={{ color: "#2C1A0E", fontSize: "12px", fontWeight: "bold", textTransform: "uppercase" }}>
@@ -199,7 +211,6 @@ export default function Dashboard({ address, disconnect, provider }) {
             </div>
             <div style={{ ...panelBody, textAlign: "center" }}>
               <p style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "16px", margin: "0 0 14px 0" }}>
-                {activeTab === "send"      && "📤 Pantalla de Envío"}
                 {activeTab === "receive"   && "📥 Recibir + QR"}
                 {activeTab === "merchants" && "🏪 Directorio de Comercios"}
                 {activeTab === "raffles"   && "🎰 Rifas y Premios"}
@@ -211,7 +222,7 @@ export default function Dashboard({ address, disconnect, provider }) {
           </div>
         )}
 
-      </div>
+      </div>}
 
       <BottomNav active={activeTab} onChange={setActiveTab} />
     </div>
