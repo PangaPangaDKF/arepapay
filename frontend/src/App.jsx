@@ -3,7 +3,7 @@ import Dashboard from "./components/Dashboard";
 import PixelButton from "./components/PixelButton";
 
 export default function App() {
-  const { address, provider, connected, connect, disconnect } = useWallet();
+  const { address, provider, connected, connect, disconnect, error } = useWallet();
 
   if (connected) {
     return (
@@ -70,6 +70,12 @@ export default function App() {
           <PixelButton variant="green" onClick={connect}>
             🔌 Conectar Wallet
           </PixelButton>
+
+          {error && (
+            <p style={{ color: "#CC2222", fontSize: "12px", margin: "12px 0 0 0", lineHeight: 1.4 }}>
+              ⚠️ {error}
+            </p>
+          )}
 
           <p style={{
             color: "#6B4A2A",

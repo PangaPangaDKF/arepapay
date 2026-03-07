@@ -1,6 +1,10 @@
+const RPC_PATH = "/ext/bc/V9NDW69xy4W7PVdCggpHN2VFZEn1VCXNDgez9GbQpRwo9p2gn/rpc";
+
 export const NETWORK = {
-  chainId: 4321987,
-  rpcUrl: "http://127.0.0.1:9650/ext/bc/V9NDW69xy4W7PVdCggpHN2VFZEn1VCXNDgez9GbQpRwo9p2gn/rpc",
+  chainId:    4321987,
+  chainIdHex: "0x41F7C3",
+  // RPC dinámico: Vite proxea /ext → 127.0.0.1:9650 en cualquier entorno
+  get rpcUrl() { return `${window.location.origin}${RPC_PATH}`; },
   contracts: {
     arepaToken:       "0x52c84043cd9c865236f11d9fc9f56aa003c1f922",
     mockUSDT:         "0x17ab05351fc94a1a67bf3f56ddbb941ae6c63e25",
