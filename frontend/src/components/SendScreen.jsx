@@ -57,6 +57,19 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
   async function sendUSDT() {
     setLoading(true);
     try {
+      // Asegurar que MetaMask esté en ArepaPay antes de firmar
+      try {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [{
+            chainId: NETWORK.chainIdHex,
+            chainName: "ArepaPay",
+            nativeCurrency: { name: "Arepa Token", symbol: "AREPA", decimals: 18 },
+            rpcUrls: [`${window.location.origin}/ext/bc/V9NDW69xy4W7PVdCggpHN2VFZEn1VCXNDgez9GbQpRwo9p2gn/rpc`],
+            blockExplorerUrls: []
+          }]
+        });
+      } catch (_) { /* continúa si falla */ }
       const signer = await provider.getSigner();
       const usdt   = new Contract(NETWORK.contracts.mockUSDT, USDT_ABI, signer);
       const value  = parseUnits(amount, 18);

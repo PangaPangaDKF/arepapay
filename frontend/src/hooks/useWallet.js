@@ -31,11 +31,25 @@ export function useWallet() {
   const [connected, setConnected] = useState(false);
   const [error, setError]         = useState(null);
 
+  const switchToArepaPay = async () => {
+    await window.ethereum.request({
+      method: "wallet_addEthereumChain",
+      params: [{
+        chainId: NETWORK.chainIdHex,
+        chainName: "ArepaPay",
+        nativeCurrency: { name: "Arepa Token", symbol: "AREPA", decimals: 18 },
+        rpcUrls: [NETWORK.rpcUrl],
+        blockExplorerUrls: []
+      }]
+    });
+  };
+
   useEffect(() => {
     // Browser de wallet (Core, MetaMask) — proveedor inyectado
     if (window.ethereum) {
-      window.ethereum.request({ method: "eth_accounts" }).then(accounts => {
+      window.ethereum.request({ method: "eth_accounts" }).then(async accounts => {
         if (accounts.length > 0) {
+          try { await switchToArepaPay(); } catch (_) { /* continúa */ }
           setAddress(accounts[0]);
           setProvider(new BrowserProvider(window.ethereum));
           setConnected(true);
@@ -49,6 +63,9 @@ export function useWallet() {
         } else {
           setAddress(null); setProvider(null); setConnected(false);
         }
+      });
+      window.ethereum.on("chainChanged", () => {
+        setProvider(new BrowserProvider(window.ethereum));
       });
     }
 
@@ -70,19 +87,7 @@ export function useWallet() {
     // Caso 1: browser interno de wallet (window.ethereum disponible)
     if (window.ethereum) {
       try {
-        // Intenta agregar la red — si falla, sigue igual
-        try {
-          await window.ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [{
-              chainId: NETWORK.chainIdHex,
-              chainName: "ArepaPay",
-              nativeCurrency: { name: "Arepa Token", symbol: "AREPA", decimals: 18 },
-              rpcUrls: [NETWORK.rpcUrl],
-              blockExplorerUrls: []
-            }]
-          });
-        } catch (_) { /* no soportado — continúa */ }
+        try { await switchToArepaPay(); } catch (_) { /* continúa aunque falle */ }
 
         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
         setAddress(accounts[0]);
@@ -103,5 +108,5 @@ export function useWallet() {
     if (!window.ethereum) modal.disconnect();
   }
 
-  return { address, provider, connected, connect, disconnect, error };
+  return { address, provider, connected, connect, disconnect, error, switchChain: switchToArepaPay };
 }

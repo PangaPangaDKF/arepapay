@@ -15,8 +15,8 @@ export default function BottomNav({ active, onChange }) {
       transform: "translateX(-50%)",
       width: "100%",
       maxWidth: "420px",
-      background: "#2C1A0E",
-      borderTop: "3px solid #0A0804",
+      background: "#1A2472",
+      borderTop: "3px solid #0D1040",
       display: "flex",
       height: "64px",
       zIndex: 100
@@ -29,9 +29,9 @@ export default function BottomNav({ active, onChange }) {
             onClick={() => onChange(tab.id)}
             style={{
               flex: 1,
-              background: isActive ? "#3E2510" : "transparent",
+              background: isActive ? "#111855" : "transparent",
               border: "none",
-              borderTop: isActive ? "3px solid #78C040" : "3px solid transparent",
+              borderTop: isActive ? "3px solid #CC1111" : "3px solid transparent",
               cursor: "pointer",
               display: "flex",
               flexDirection: "column",
@@ -46,7 +46,7 @@ export default function BottomNav({ active, onChange }) {
             <span style={{
               fontSize: "10px",
               fontWeight: isActive ? "bold" : "normal",
-              color: isActive ? "#78C040" : "#A08060",
+              color: isActive ? "#CC1111" : "#8899CC",
               fontFamily: "Inter, sans-serif"
             }}>
               {tab.label}

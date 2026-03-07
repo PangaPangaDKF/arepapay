@@ -2,8 +2,20 @@ import { useWallet } from "./hooks/useWallet";
 import Dashboard from "./components/Dashboard";
 import PixelButton from "./components/PixelButton";
 
+const CHECKER = {
+  backgroundImage: [
+    "linear-gradient(45deg, #CC1111 25%, transparent 25%)",
+    "linear-gradient(-45deg, #CC1111 25%, transparent 25%)",
+    "linear-gradient(45deg, transparent 75%, #CC1111 75%)",
+    "linear-gradient(-45deg, transparent 75%, #CC1111 75%)",
+  ].join(", "),
+  backgroundSize: "12px 12px",
+  backgroundPosition: "0 0, 0 6px, 6px -6px, -6px 0px",
+  backgroundColor: "#FFFFFF",
+};
+
 export default function App() {
-  const { address, provider, connected, connect, disconnect, error } = useWallet();
+  const { address, provider, connected, connect, disconnect, error, switchChain } = useWallet();
 
   if (connected) {
     return (
@@ -11,6 +23,7 @@ export default function App() {
         address={address}
         provider={provider}
         disconnect={disconnect}
+        switchChain={switchChain}
       />
     );
   }
@@ -18,7 +31,7 @@ export default function App() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#F5E8C0",
+      background: "#FFF8E0",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -29,63 +42,84 @@ export default function App() {
       margin: "0 auto"
     }}>
 
-      {/* Panel principal login */}
+      {/* Card principal */}
       <div style={{
-        background: "#F0DCA0",
-        border: "3px solid #2C1A0E",
-        borderRadius: "10px",
-        boxShadow: "6px 6px 0px #2C1A0E",
+        background: "#FFFFFF",
+        border: "4px solid #C89038",
+        borderRadius: "16px",
+        boxShadow: "6px 6px 0px #C89038",
         width: "100%",
         overflow: "hidden"
       }}>
-        {/* Header panel */}
-        <div style={{
-          background: "#D4B87A",
-          borderBottom: "3px solid #2C1A0E",
-          padding: "12px 20px",
-          textAlign: "center"
-        }}>
-          <span style={{ fontSize: "40px" }}>🫓</span>
-        </div>
 
-        {/* Body */}
-        <div style={{ padding: "24px 20px", textAlign: "center" }}>
+        {/* Franja tablero arriba */}
+        <div style={{ height: "14px", ...CHECKER }} />
+
+        {/* Cuerpo */}
+        <div style={{ padding: "28px 24px", textAlign: "center" }}>
+
+          {/* Logo arepa */}
+          <div style={{
+            width: "96px",
+            height: "96px",
+            background: "#FFF8E0",
+            border: "4px solid #C89038",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 20px auto",
+            fontSize: "52px",
+            boxShadow: "3px 3px 0px #C89038"
+          }}>
+            🫓
+          </div>
+
+          {/* Título */}
           <h1 style={{
-            color: "#2C1A0E",
-            fontSize: "28px",
+            color: "#1A2472",
+            fontSize: "34px",
             fontWeight: "900",
             margin: "0 0 6px 0",
-            letterSpacing: "3px"
+            letterSpacing: "4px",
+            textTransform: "uppercase"
           }}>
             AREPAPAY
           </h1>
+
           <p style={{
-            color: "#6B4A2A",
+            color: "#CC1111",
             fontSize: "13px",
-            margin: "0 0 28px 0"
+            fontWeight: "bold",
+            margin: "0 0 28px 0",
+            letterSpacing: "1px",
+            textTransform: "uppercase"
           }}>
-            La arepa es venezolana. 🇻🇪
+            La arepa es venezolana 🇻🇪
           </p>
 
-          <PixelButton variant="green" onClick={connect}>
+          <PixelButton variant="blue" onClick={connect}>
             🔌 Conectar Wallet
           </PixelButton>
 
           {error && (
-            <p style={{ color: "#CC2222", fontSize: "12px", margin: "12px 0 0 0", lineHeight: 1.4 }}>
+            <p style={{ color: "#CC1111", fontSize: "12px", margin: "12px 0 0 0", lineHeight: 1.4 }}>
               ⚠️ {error}
             </p>
           )}
 
           <p style={{
-            color: "#6B4A2A",
+            color: "#8899CC",
             fontSize: "11px",
-            margin: "16px 0 0 0",
+            margin: "18px 0 0 0",
             lineHeight: 1.5
           }}>
             Autocustodia · Red ArepaPay · Avalanche
           </p>
         </div>
+
+        {/* Franja tablero abajo */}
+        <div style={{ height: "14px", ...CHECKER }} />
       </div>
 
     </div>
