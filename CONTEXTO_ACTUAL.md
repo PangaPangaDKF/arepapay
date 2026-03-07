@@ -122,6 +122,19 @@ Wallet deployer (ewoq - solo desarrollo local):
 - [x] PWA configurada: instalable desde Chrome móvil, manifest + service worker
 ---
 
+## 🏆 REQUISITOS JUECES (ver JUECES_MVP.md para detalle)
+
+**Lo que piden (al menos uno):**
+- [x] Repo público GitHub — https://github.com/PangaPangaDKF/arepapay
+- [ ] Live MVP funcional — actualmente solo local (ngrok)
+- [ ] Web3 verificable en **Fuji testnet** — CRITICO: jueces no pueden ver subnet local
+- [ ] Contratos verificados en Snowtrace explorer
+- [ ] README completo con screenshots
+
+**Conclusión: hay que migrar a Fuji C-Chain para el MVP de jueces.**
+
+---
+
 ## 🚧 EN QUÉ ESTOY AHORA
 
 **Tarea actual:** Directorio de Comercios (placeholder funcional)
