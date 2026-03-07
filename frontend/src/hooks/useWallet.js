@@ -11,7 +11,7 @@ const modal = createWeb3Modal({
       name: "ArepaPay",
       description: "Pagos P2P venezolanos",
       url: window.location.origin,
-      icons: []
+      icons: [`${window.location.origin}/icon-192.svg`]
     }
   }),
   chains: [{
@@ -25,20 +25,6 @@ const modal = createWeb3Modal({
   themeMode: "light"
 });
 
-// Agrega la red ArepaPay a la wallet y cambia a ella
-async function addArepaNetwork() {
-  await window.ethereum.request({
-    method: "wallet_addEthereumChain",
-    params: [{
-      chainId: NETWORK.chainIdHex,
-      chainName: "ArepaPay",
-      nativeCurrency: { name: "Arepa Token", symbol: "AREPA", decimals: 18 },
-      rpcUrls: [NETWORK.rpcUrl],
-      blockExplorerUrls: []
-    }]
-  });
-}
-
 export function useWallet() {
   const [address, setAddress]     = useState(null);
   const [provider, setProvider]   = useState(null);
@@ -46,41 +32,33 @@ export function useWallet() {
   const [error, setError]         = useState(null);
 
   useEffect(() => {
-    if (!window.ethereum) return;
+    // Browser de wallet (Core, MetaMask) — proveedor inyectado
+    if (window.ethereum) {
+      window.ethereum.request({ method: "eth_accounts" }).then(accounts => {
+        if (accounts.length > 0) {
+          setAddress(accounts[0]);
+          setProvider(new BrowserProvider(window.ethereum));
+          setConnected(true);
+        }
+      });
+      window.ethereum.on("accountsChanged", accounts => {
+        if (accounts.length > 0) {
+          setAddress(accounts[0]);
+          setProvider(new BrowserProvider(window.ethereum));
+          setConnected(true);
+        } else {
+          setAddress(null); setProvider(null); setConnected(false);
+        }
+      });
+    }
 
-    // Reconectar si ya había una cuenta activa
-    window.ethereum.request({ method: "eth_accounts" }).then(accounts => {
-      if (accounts.length > 0) {
-        setAddress(accounts[0]);
-        setProvider(new BrowserProvider(window.ethereum));
-        setConnected(true);
-      }
-    });
-
-    window.ethereum.on("accountsChanged", accounts => {
-      if (accounts.length > 0) {
-        setAddress(accounts[0]);
-        setProvider(new BrowserProvider(window.ethereum));
-        setConnected(true);
-      } else {
-        setAddress(null); setProvider(null); setConnected(false);
-      }
-    });
-
-    window.ethereum.on("chainChanged", () => {
-      setProvider(new BrowserProvider(window.ethereum));
-    });
-  }, []);
-
-  // WalletConnect como respaldo (sin window.ethereum)
-  useEffect(() => {
-    if (window.ethereum) return;
+    // WalletConnect — Chrome externo → Core/MetaMask app
     modal.subscribeProvider(({ address, isConnected, provider }) => {
       if (isConnected && address) {
         setAddress(address);
         setProvider(new BrowserProvider(provider));
         setConnected(true);
-      } else {
+      } else if (!window.ethereum) {
         setAddress(null); setProvider(null); setConnected(false);
       }
     });
@@ -88,22 +66,36 @@ export function useWallet() {
 
   async function connect() {
     setError(null);
+
+    // Caso 1: browser interno de wallet (window.ethereum disponible)
     if (window.ethereum) {
       try {
-        // 1. Agrega y cambia a la red ArepaPay automáticamente
-        await addArepaNetwork();
-        // 2. Solicita acceso a la cuenta
+        // Intenta agregar la red — si falla, sigue igual
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [{
+              chainId: NETWORK.chainIdHex,
+              chainName: "ArepaPay",
+              nativeCurrency: { name: "Arepa Token", symbol: "AREPA", decimals: 18 },
+              rpcUrls: [NETWORK.rpcUrl],
+              blockExplorerUrls: []
+            }]
+          });
+        } catch (_) { /* no soportado — continúa */ }
+
         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
         setAddress(accounts[0]);
         setProvider(new BrowserProvider(window.ethereum));
         setConnected(true);
       } catch (e) {
-        console.error(e);
-        setError(e?.message || "Error al conectar");
+        setError("No se pudo conectar. Intenta de nuevo.");
       }
-    } else {
-      modal.open();
+      return;
     }
+
+    // Caso 2: Chrome externo → abre WalletConnect modal
+    modal.open();
   }
 
   function disconnect() {
