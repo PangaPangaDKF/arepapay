@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Contract, parseUnits, isAddress } from "ethers";
 import PixelButton from "./PixelButton";
 import { NETWORK } from "../config/network";
@@ -43,33 +43,34 @@ const inputStyle = {
 const STEPS = { FORM: "form", CONFIRM: "confirm", SUCCESS: "success", ERROR: "error" };
 
 export default function SendScreen({ provider, address, usdtBalance, onBack, onSuccess }) {
-  const [step, setStep]       = useState(STEPS.FORM);
-  const [to, setTo]           = useState("");
-  const [amount, setAmount]   = useState("");
-  const [loading, setLoading] = useState(false);
-  const [txHash, setTxHash]   = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [step, setStep]           = useState(STEPS.FORM);
+  const [to, setTo]               = useState("");
+  const [amount, setAmount]       = useState("");
+  const [loading, setLoading]     = useState(false);
+  const [txHash, setTxHash]       = useState("");
+  const [errorMsg, setErrorMsg]   = useState("");
+  const [wrongChain, setWrongChain] = useState(false);
+
+  // Verificar red al abrir la pantalla
+  useEffect(() => {
+    if (!window.ethereum) return;
+    window.ethereum.request({ method: "eth_chainId" }).then(chainId => {
+      setWrongChain(parseInt(chainId, 16) !== NETWORK.chainId);
+    });
+    const handler = (chainId) => setWrongChain(parseInt(chainId, 16) !== NETWORK.chainId);
+    window.ethereum.on("chainChanged", handler);
+    return () => window.ethereum.removeListener("chainChanged", handler);
+  }, []);
+
+  const [showManualInstructions, setShowManualInstructions] = useState(false);
 
   const toValid     = isAddress(to);
   const amountValid = parseFloat(amount) > 0 && parseFloat(amount) <= parseFloat(usdtBalance.replace(/\./g, "").replace(",", "."));
-  const canContinue = toValid && amountValid;
+  const canContinue = toValid && amountValid && !wrongChain;
 
   async function sendUSDT() {
     setLoading(true);
     try {
-      // Asegurar que MetaMask esté en ArepaPay antes de firmar
-      try {
-        await window.ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [{
-            chainId: NETWORK.chainIdHex,
-            chainName: "ArepaPay",
-            nativeCurrency: { name: "Arepa Token", symbol: "AREPA", decimals: 18 },
-            rpcUrls: [`${window.location.origin}/ext/bc/V9NDW69xy4W7PVdCggpHN2VFZEn1VCXNDgez9GbQpRwo9p2gn/rpc`],
-            blockExplorerUrls: []
-          }]
-        });
-      } catch (_) { /* continúa si falla */ }
       const signer = await provider.getSigner();
       const usdt   = new Contract(NETWORK.contracts.mockUSDT, USDT_ABI, signer);
       const value  = parseUnits(amount, 18);
@@ -151,7 +152,7 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
 
             <Row label="Monto" value={`${amount} USDT`} big />
             <Row label="Para" value={`${to.slice(0, 8)}...${to.slice(-6)}`} />
-            <Row label="Red" value="ArepaPay" />
+            <Row label="Red" value="Avalanche Fuji" />
 
             <div style={{
               background: "#FFF8E8",
@@ -189,6 +190,37 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
           <span style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "14px" }}>Enviar USDT</span>
         </div>
         <div style={{ padding: "20px 16px", display: "flex", flexDirection: "column", gap: "18px" }}>
+
+          {/* Alerta de red incorrecta */}
+          {wrongChain && (
+            <div style={{ background: "#FFF0F0", border: "3px solid #CC1111", borderRadius: "10px", padding: "14px" }}>
+              <p style={{ color: "#CC1111", fontWeight: "bold", fontSize: "13px", margin: "0 0 10px 0", textAlign: "center" }}>
+                ⚠️ MetaMask está en la red equivocada
+              </p>
+              <button
+                onClick={() => setShowManualInstructions(v => !v)}
+                style={{ width: "100%", background: "#CC1111", border: "none", borderRadius: "8px", color: "white", fontWeight: "bold", fontSize: "13px", padding: "10px", cursor: "pointer", fontFamily: "Inter, sans-serif" }}
+              >
+                {showManualInstructions ? "▲ Ocultar instrucciones" : "🔌 ¿Cómo cambiar a ArepaPay?"}
+              </button>
+              {showManualInstructions && (
+                <div style={{ marginTop: "12px", background: "#FFF8E8", border: "2px solid #CC1111", borderRadius: "8px", padding: "12px" }}>
+                  <p style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "13px", margin: "0 0 8px 0" }}>Pasos en MetaMask:</p>
+                  {[
+                    "1. Toca el ícono de MetaMask (abajo o en la barra)",
+                    "2. Toca el nombre de la red actual (arriba)",
+                    "3. Busca \"Avalanche Fuji\" en la lista",
+                    "4. Selecciónala y vuelve aquí",
+                  ].map((step, i) => (
+                    <p key={i} style={{ color: "#2C1A0E", fontSize: "12px", margin: "0 0 4px 0", lineHeight: 1.4 }}>{step}</p>
+                  ))}
+                  <p style={{ color: "#6B4A2A", fontSize: "11px", margin: "8px 0 0 0" }}>
+                    Fuji es la testnet publica de Avalanche. MetaMask la incluye por defecto.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Balance disponible */}
           <div style={{

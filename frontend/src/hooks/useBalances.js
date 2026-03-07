@@ -21,17 +21,16 @@ export function useBalances(provider, address) {
       // Leer directo del RPC — no depende de la red activa en MetaMask
       const rpcProvider = new JsonRpcProvider(NETWORK.rpcUrl);
       const usdt   = new Contract(NETWORK.contracts.mockUSDT,     ERC20_ABI, rpcProvider);
-      const arepa  = new Contract(NETWORK.contracts.arepaToken,   ERC20_ABI, rpcProvider);
       const reward = new Contract(NETWORK.contracts.rewardTicket, ERC20_ABI, rpcProvider);
 
-      const [rawUsdt, rawArepa, rawTickets] = await Promise.all([
+      const [rawUsdt, rawNative, rawTickets] = await Promise.all([
         usdt.balanceOf(address),
-        arepa.balanceOf(address),
+        rpcProvider.getBalance(address),
         reward.balanceOf(address)
       ]);
 
-      setUsdtBalance(parseFloat(formatUnits(rawUsdt,  18)).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-      setArepaBalance(parseFloat(formatUnits(rawArepa, 18)).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+      setUsdtBalance(parseFloat(formatUnits(rawUsdt,   18)).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+      setArepaBalance(parseFloat(formatUnits(rawNative, 18)).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 4 }));
       setTickets(Number(rawTickets));
     } catch (e) {
       setFetchError(e?.message || String(e));

@@ -87,3 +87,94 @@ rpcUrl:     "https://api.avax-test.network/ext/bc/C/rpc"
 ArepaPay es una app de pagos P2P para venezolanos construida sobre Avalanche.
 Los usuarios pagan con USDT, ganan tickets por cada transaccion y participan en rifas de premios fisicos.
 Sin bancos, sin intermediarios. Autocustodia total.
+
+---
+
+## Preguntas del formulario de submission (RESPONDER ANTES DE ENVIAR)
+
+### 1. GitHub Repository
+```
+https://github.com/PangaPangaDKF/arepapay
+```
+
+### 2. Technical Documentation — Tech stack, architecture decisions, implementation approach
+```
+Stack: Solidity (Foundry) + React (Vite) + ethers.js v6 + MetaMask.
+
+Arquitectura:
+- Capa de contratos: 6 contratos en Avalanche. ArepaToken (ERC20, gas nativo en produccion),
+  MockUSDT (ERC20 para pagos), MerchantRegistry (registro de comercios verificados),
+  PaymentProcessor (procesa pagos y acumula tickets), RewardTicket (ERC20 de tickets),
+  LiquidityManager (reservas de liquidez).
+- Capa frontend: React SPA sin backend. Se comunica directo con la chain via RPC.
+  useBalances usa JsonRpcProvider para leer sin depender de la red activa en MetaMask.
+  useWallet usa BrowserProvider para firmar transacciones.
+- Decision clave: subnet personalizada en produccion para controlar gas (AREPA en vez de AVAX),
+  seguridad de red y permisos de validadores. Para el MVP/demo se usa Fuji C-Chain.
+```
+
+### 3. Architecture Design Overview — Components, workflows, data flow, on-chain vs off-chain
+```
+Componentes principales:
+  [Usuario/MetaMask] → [React Frontend] → [RPC Avalanche] → [Contratos Solidity]
+
+Flujo de datos:
+  - Lectura de balances: Frontend → JsonRpcProvider → balanceOf() en MockUSDT, ArepaToken, RewardTicket
+  - Envio de pago: Usuario firma → BrowserProvider → MockUSDT.transfer() → on-chain
+  - Tickets: PaymentProcessor detecta pago → mintea RewardTicket al pagador (pendiente integrar en frontend)
+
+On-chain: Todo el estado de saldos, pagos y tickets. Sin base de datos centralizada.
+Off-chain: Solo el frontend estatico (Vercel). Sin servidor, sin backend, sin custodio.
+
+El MVP demuestra el flujo completo P2P: conectar wallet → ver balance USDT → enviar a otra
+direccion → recibir confirmacion on-chain.
+```
+
+### 4. User Journey — How does a user interact from start to finish?
+```
+Paso 1: Usuario abre la app en el navegador de MetaMask (mobile) o desktop.
+Paso 2: Toca "Conectar Wallet" → MetaMask pide aprobacion → conectado.
+Paso 3: Dashboard muestra balance USDT, balance AREPA (gas), y tickets disponibles.
+Paso 4: Toca "Enviar" → ingresa direccion del destinatario y monto en USDT.
+Paso 5: Pantalla de confirmacion muestra resumen del pago con advertencia de irreversibilidad.
+Paso 6: Toca "Confirmar y Enviar" → MetaMask abre popup para firmar la transaccion.
+Paso 7: Usuario aprueba → transaccion se ejecuta on-chain → pantalla de exito con TX hash.
+Paso 8: El destinatario puede ver el pago recibido en su propio dashboard al conectar su wallet.
+Flujo alternativo: "Recibir" muestra QR con la direccion para que otro usuario escanee y envie.
+```
+
+### 5. MoSCoW Framework — Feature Prioritization
+```
+Must Have:
+- Enviar USDT a cualquier direccion (P2P directo, sin intermediario)
+- Ver balance USDT en tiempo real
+- Conectar MetaMask (autocustodia, sin registro)
+- Confirmacion on-chain de la transaccion
+
+Should Have:
+- Tickets por cada pago (gamificacion de la app)
+- QR para recibir pagos (flujo mobile-first)
+- Deteccion de red incorrecta con instrucciones claras
+- Dashboard con balance de gas (AREPA) y tickets
+
+Could Have:
+- Rifas/sorteos con los tickets acumulados
+- Directorio de comercios verificados
+- Historial de transacciones
+- Panel de comerciante para recibir pagos con monto fijo
+
+Won't Have (en este MVP):
+- KYC/identidad de usuarios
+- Bridge a otras redes (BSC, ETH mainnet)
+- Conversion fiat automatica
+- Custodio centralizado de fondos
+```
+
+### 6. Video walkthrough (max 5 minutos) — PENDIENTE GRABAR
+Guion sugerido:
+1. (0:00-0:30) Problema: venezolanos sin acceso bancario, remesas costosas
+2. (0:30-1:00) Solucion: ArepaPay, pagos P2P con USDT, autocustodia total
+3. (1:00-2:30) Demo en vivo: conectar wallet → ver balance → enviar USDT → confirmar en MetaMask → exito
+4. (2:30-3:30) Mostrar TX en Snowtrace explorer (verificacion on-chain)
+5. (3:30-4:30) Arquitectura rapida: contratos en Avalanche, sin backend, sin custodio
+6. (4:30-5:00) Vision: subnet propia con AREPA como gas, directorio de comercios, rifas

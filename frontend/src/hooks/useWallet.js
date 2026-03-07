@@ -16,9 +16,9 @@ const modal = createWeb3Modal({
   }),
   chains: [{
     chainId: NETWORK.chainId,
-    name: "ArepaPay",
-    currency: "AREPA",
-    explorerUrl: "",
+    name: "Avalanche Fuji Testnet",
+    currency: "AVAX",
+    explorerUrl: "https://testnet.snowtrace.io",
     rpcUrl: NETWORK.rpcUrl
   }],
   projectId: PROJECT_ID,
@@ -32,16 +32,26 @@ export function useWallet() {
   const [error, setError]         = useState(null);
 
   const switchToArepaPay = async () => {
-    await window.ethereum.request({
-      method: "wallet_addEthereumChain",
-      params: [{
-        chainId: NETWORK.chainIdHex,
-        chainName: "ArepaPay",
-        nativeCurrency: { name: "Arepa Token", symbol: "AREPA", decimals: 18 },
-        rpcUrls: [NETWORK.rpcUrl],
-        blockExplorerUrls: []
-      }]
-    });
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: NETWORK.chainIdHex }]
+      });
+    } catch (e) {
+      // 4902 = cadena no agregada aun — la agregamos
+      if (e?.code === 4902 || e?.code === -32603) {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [{
+            chainId: NETWORK.chainIdHex,
+            chainName: "Avalanche Fuji Testnet",
+            nativeCurrency: { name: "Avalanche", symbol: "AVAX", decimals: 18 },
+            rpcUrls: [NETWORK.rpcUrl],
+            blockExplorerUrls: ["https://testnet.snowtrace.io"]
+          }]
+        });
+      }
+    }
   };
 
   useEffect(() => {

@@ -120,7 +120,7 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
           {/* GAS + TICKETS */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "14px" }}>
             {[
-              { label: "Gas", emoji: "🫓", value: loading ? "—" : arepaBalance, sub: "AREPA" },
+              { label: "AREPA", emoji: "🫓", value: loading ? "—" : arepaBalance, sub: "tokens" },
               { label: "Tickets", emoji: "🎟️", value: loading ? "—" : tickets, sub: "disponibles" },
             ].map(item => (
               <div key={item.label} style={{ ...panel, marginBottom: 0 }}>
