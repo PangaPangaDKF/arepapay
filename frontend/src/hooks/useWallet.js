@@ -17,7 +17,7 @@ const modal = createWeb3Modal({
     metadata: {
       name: "ArepaPay",
       description: "Pagos P2P venezolanos",
-      url: "http://localhost:5173",
+      url: window.location.origin,
       icons: []
     }
   }),
@@ -27,17 +27,42 @@ const modal = createWeb3Modal({
 });
 
 export function useWallet() {
-  const [address, setAddress]   = useState(null);
-  const [provider, setProvider] = useState(null);
+  const [address, setAddress]     = useState(null);
+  const [provider, setProvider]   = useState(null);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
+    // Si hay proveedor inyectado (Core/MetaMask en browser interno), conéctalo directo
+    if (window.ethereum) {
+      window.ethereum.request({ method: "eth_accounts" }).then(accounts => {
+        if (accounts.length > 0) {
+          const p = new BrowserProvider(window.ethereum);
+          setAddress(accounts[0]);
+          setProvider(p);
+          setConnected(true);
+        }
+      });
+
+      window.ethereum.on("accountsChanged", accounts => {
+        if (accounts.length > 0) {
+          setAddress(accounts[0]);
+          setProvider(new BrowserProvider(window.ethereum));
+          setConnected(true);
+        } else {
+          setAddress(null);
+          setProvider(null);
+          setConnected(false);
+        }
+      });
+    }
+
+    // WalletConnect como respaldo
     modal.subscribeProvider(({ address, isConnected, provider }) => {
       if (isConnected && address) {
         setAddress(address);
         setProvider(new BrowserProvider(provider));
         setConnected(true);
-      } else {
+      } else if (!window.ethereum) {
         setAddress(null);
         setProvider(null);
         setConnected(false);
@@ -45,8 +70,27 @@ export function useWallet() {
     });
   }, []);
 
-  const connect    = () => modal.open();
-  const disconnect = () => modal.disconnect();
+  async function connect() {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+        setAddress(accounts[0]);
+        setProvider(new BrowserProvider(window.ethereum));
+        setConnected(true);
+      } catch (e) {
+        console.error("Error conectando wallet:", e);
+      }
+    } else {
+      modal.open();
+    }
+  }
+
+  function disconnect() {
+    setAddress(null);
+    setProvider(null);
+    setConnected(false);
+    if (!window.ethereum) modal.disconnect();
+  }
 
   return { address, provider, connected, connect, disconnect };
 }
