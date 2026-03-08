@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PixelButton from "./PixelButton";
+import { useRaffle } from "../hooks/useRaffle";
 
 const panel = {
   background: "#F0DCA0",
@@ -19,77 +20,26 @@ const panelHeader = {
   gap: "8px"
 };
 
-// Mock de rifas activas — se conectarán al contrato en la siguiente fase
-const RIFAS = [
-  {
-    id: 1,
-    emoji: "🍦",
-    nombre: "Helados por un mes",
-    descripcion: "1 helado diario durante 30 días en heladerías participantes",
-    costo: 5,
-    participantes: 38,
-    maximo: 100,
-    activa: true
-  },
-  {
-    id: 2,
-    emoji: "📶",
-    nombre: "Internet 30 días",
-    descripcion: "Plan de datos móviles 4G por 30 días",
-    costo: 10,
-    participantes: 21,
-    maximo: 50,
-    activa: true
-  },
-  {
-    id: 3,
-    emoji: "🎬",
-    nombre: "Netflix 1 mes",
-    descripcion: "Suscripción Netflix estándar por 30 días",
-    costo: 8,
-    participantes: 44,
-    maximo: 60,
-    activa: true
-  },
-  {
-    id: 4,
-    emoji: "🛒",
-    nombre: "Mercado $20",
-    descripcion: "$20 en productos de primera necesidad en comercios ArepaPay",
-    costo: 15,
-    participantes: 12,
-    maximo: 30,
-    activa: true
-  }
-];
+export default function RafflesScreen({ tickets, provider, address, onBack }) {
+  const { state, myStake, loading, entering, error, enter } = useRaffle(provider, address);
+  const [ticketsToEnter, setTicketsToEnter] = useState(1);
 
-export default function RafflesScreen({ tickets, onBack }) {
-  const [entered, setEntered] = useState({});
-  const [showConfirm, setShowConfirm] = useState(null);
-  const ticketsRestantes = tickets - Object.values(entered).reduce((a, b) => a + b, 0);
-
-  function entrar(rifa) {
-    if (ticketsRestantes < rifa.costo) return;
-    setEntered(prev => ({ ...prev, [rifa.id]: (prev[rifa.id] || 0) + rifa.costo }));
-    setShowConfirm(rifa.id);
-    setTimeout(() => setShowConfirm(null), 2500);
-  }
+  const txCount      = state?.txCount     ?? 0;
+  const txThreshold  = state?.txThreshold ?? 10;
+  const isOpen       = state?.isOpen      ?? false;
+  const txProgress   = txCount % txThreshold;
+  const progressPct  = isOpen ? 100 : Math.round((txProgress / txThreshold) * 100);
+  const canEnter     = isOpen && !state?.drawn && tickets > 0;
+  const maxTickets   = Math.min(tickets, 99);
+  const ZERO_ADDR    = "0x0000000000000000000000000000000000000000";
+  const realWinners  = (state?.winners ?? []).slice(0, state?.winnersCount ?? 0).filter(w => w !== ZERO_ADDR);
+  const medals       = ["🥇", "🥈", "🥉"];
 
   return (
     <div style={{ padding: "16px", paddingBottom: "80px" }}>
       <button
         onClick={onBack}
-        style={{
-          background: "transparent",
-          border: "none",
-          color: "#6B4A2A",
-          fontSize: "14px",
-          fontWeight: "bold",
-          cursor: "pointer",
-          marginBottom: "12px",
-          padding: "4px 0",
-          fontFamily: "Inter, sans-serif"
-        }}
+        style={{ background: "transparent", border: "none", color: "#6B4A2A", fontSize: "14px", fontWeight: "bold", cursor: "pointer", marginBottom: "12px", padding: "4px 0", fontFamily: "Inter, sans-serif" }}
       >
         ← Volver
       </button>
@@ -105,165 +55,182 @@ export default function RafflesScreen({ tickets, onBack }) {
       }}>
         <div style={{ background: "#1A0C04", borderBottom: "3px solid #0A0804", padding: "8px 16px" }}>
           <span style={{ color: "#D4B87A", fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "1px" }}>
-            Mis Tickets disponibles
+            Mis Tickets
           </span>
         </div>
         <div style={{ padding: "18px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <p style={{ color: "#F5E8C0", fontSize: "48px", fontWeight: "900", margin: 0, lineHeight: 1 }}>
-              {ticketsRestantes}
-            </p>
-            <p style={{ color: "#A08060", fontSize: "12px", margin: "4px 0 0 0" }}>
-              tickets para usar en rifas
-            </p>
+            <p style={{ color: "#F5E8C0", fontSize: "48px", fontWeight: "900", margin: 0, lineHeight: 1 }}>{tickets}</p>
+            <p style={{ color: "#A08060", fontSize: "12px", margin: "4px 0 0 0" }}>tickets disponibles para rifas</p>
           </div>
           <span style={{ fontSize: "52px" }}>🎟️</span>
         </div>
         <div style={{ background: "#1A0C04", borderTop: "2px solid #0A0804", padding: "10px 16px" }}>
           <p style={{ color: "#A08060", fontSize: "12px", margin: 0 }}>
-            💡 Ganas 1 ticket por cada pago enviado o recibido
+            Ganas 1 ticket por cada pago a comercio enviado o recibido
           </p>
         </div>
       </div>
 
-      {/* Rifas activas */}
-      <div style={{ ...panel, marginBottom: "6px" }}>
-        <div style={panelHeader}>
-          <span style={{ fontSize: "18px" }}>🎰</span>
-          <span style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "14px" }}>Rifas activas</span>
-          <span style={{
-            marginLeft: "auto",
-            background: "#78C040",
-            border: "2px solid #2C1A0E",
-            borderRadius: "12px",
-            padding: "2px 10px",
-            fontSize: "12px",
-            fontWeight: "bold",
-            color: "#2C1A0E"
-          }}>
-            {RIFAS.length} abiertas
+      {/* Progreso hacia la proxima rifa */}
+      <div style={{ background: "#FFFFFF", border: "3px solid #C89038", borderRadius: "10px", boxShadow: "4px 4px 0px #C89038", marginBottom: "14px", overflow: "hidden" }}>
+        <div style={{ background: "#FFF8E0", borderBottom: "2px solid #C89038", padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ color: "#1A2472", fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "1px" }}>
+            {isOpen ? "Rifa activa" : "Proxima rifa"}
           </span>
+          <span style={{ color: "#CC1111", fontSize: "12px", fontWeight: "bold" }}>
+            {isOpen ? "ABIERTA" : `${txProgress} / ${txThreshold} pagos`}
+          </span>
+        </div>
+        <div style={{ padding: "12px 16px" }}>
+          <div style={{ background: "#E8E0C8", borderRadius: "6px", height: "18px", overflow: "hidden", border: "2px solid #2C1A0E" }}>
+            <div style={{ width: `${progressPct}%`, height: "100%", background: isOpen ? "#78C040" : "#CC1111", transition: "width 0.5s ease", borderRadius: "4px" }} />
+          </div>
+          <p style={{ color: "#6B4A2A", fontSize: "11px", margin: "6px 0 0 0", textAlign: "center" }}>
+            {loading
+              ? "Cargando..."
+              : isOpen
+                ? `${state.participantCount} participantes — ${state.totalStaked} tickets apostados en total`
+                : `Faltan ${txThreshold - txProgress} pago(s) para abrir la rifa`}
+          </p>
         </div>
       </div>
 
-      {RIFAS.map(rifa => {
-        const yaEntro = !!entered[rifa.id];
-        const puedeEntrar = ticketsRestantes >= rifa.costo && !yaEntro;
-        const progreso = Math.round((rifa.participantes / rifa.maximo) * 100);
+      {/* Rifa abierta — entrada */}
+      {isOpen && state && !state.drawn && (
+        <div style={panel}>
+          <div style={panelHeader}>
+            <span style={{ fontSize: "22px" }}>🍦</span>
+            <span style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "14px" }}>{state.prize || "Rifa Activa"}</span>
+            <span style={{ marginLeft: "auto", background: "#78C040", border: "2px solid #2C1A0E", borderRadius: "12px", padding: "2px 10px", fontSize: "12px", fontWeight: "bold", color: "#2C1A0E" }}>
+              ABIERTA
+            </span>
+          </div>
+          <div style={{ padding: "16px" }}>
 
-        return (
-          <div key={rifa.id} style={panel}>
-            <div style={{ padding: "16px" }}>
-
-              {/* Encabezado de rifa */}
-              <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", marginBottom: "12px" }}>
-                <div style={{
-                  background: "#D4B87A",
-                  border: "3px solid #2C1A0E",
-                  borderRadius: "10px",
-                  width: "56px",
-                  height: "56px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "30px",
-                  flexShrink: 0
-                }}>
-                  {rifa.emoji}
+            {/* Stats */}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "16px" }}>
+              {[
+                { label: "Participantes", value: state.participantCount },
+                { label: "Tickets en juego", value: state.totalStaked },
+                { label: "Mis tickets", value: myStake, highlight: true },
+              ].map(({ label, value, highlight }) => (
+                <div key={label} style={{ flex: 1, background: "#FFF8E8", border: "2px solid #2C1A0E", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
+                  <p style={{ color: "#6B4A2A", fontSize: "11px", margin: "0 0 4px 0" }}>{label}</p>
+                  <p style={{ color: highlight ? "#1A2472" : "#2C1A0E", fontWeight: "900", fontSize: "22px", margin: 0 }}>{value}</p>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "16px", margin: "0 0 4px 0" }}>
-                    {rifa.nombre}
+              ))}
+            </div>
+
+            {/* Mi probabilidad actual */}
+            {myStake > 0 && state.totalStaked > 0 && (
+              <div style={{ background: "#1A2472", border: "2px solid #0D1040", borderRadius: "8px", padding: "10px 14px", marginBottom: "14px", textAlign: "center" }}>
+                <p style={{ color: "#FFD84A", fontWeight: "bold", fontSize: "13px", margin: 0 }}>
+                  Tu probabilidad actual: {((myStake / state.totalStaked) * 100).toFixed(1)}%
+                </p>
+              </div>
+            )}
+
+            {/* Entrada */}
+            {canEnter ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <label style={{ color: "#2C1A0E", fontSize: "13px", fontWeight: "bold" }}>
+                  Cuantos tickets apostar?
+                </label>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <input
+                    type="number"
+                    min={1}
+                    max={maxTickets}
+                    value={ticketsToEnter}
+                    onChange={e => setTicketsToEnter(Math.max(1, Math.min(maxTickets, parseInt(e.target.value) || 1)))}
+                    style={{ flex: 1, background: "#FFF8E8", border: "3px solid #2C1A0E", borderRadius: "8px", padding: "12px 14px", fontSize: "22px", fontFamily: "Inter, sans-serif", color: "#2C1A0E", fontWeight: "900", outline: "none" }}
+                  />
+                  <span style={{ fontSize: "28px" }}>🎟️</span>
+                </div>
+                {ticketsToEnter > 0 && (
+                  <p style={{ color: "#6B4A2A", fontSize: "12px", margin: 0, textAlign: "center" }}>
+                    Con {ticketsToEnter} ticket(s) tendrias{" "}
+                    <strong>
+                      {(((myStake + ticketsToEnter) / Math.max(1, state.totalStaked + ticketsToEnter)) * 100).toFixed(1)}%
+                    </strong>{" "}
+                    de probabilidad
                   </p>
-                  <p style={{ color: "#6B4A2A", fontSize: "12px", margin: 0, lineHeight: 1.4 }}>
-                    {rifa.descripcion}
-                  </p>
-                </div>
+                )}
+                <PixelButton variant="green" onClick={() => enter(ticketsToEnter)} disabled={entering}>
+                  {entering ? "Apostando..." : `Apostar ${ticketsToEnter} ticket(s)`}
+                </PixelButton>
               </div>
-
-              {/* Progreso */}
-              <div style={{ marginBottom: "12px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
-                  <span style={{ color: "#6B4A2A", fontSize: "12px" }}>Participantes</span>
-                  <span style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "12px" }}>
-                    {rifa.participantes} / {rifa.maximo}
-                  </span>
-                </div>
-                <div style={{
-                  background: "#C4A870",
-                  border: "2px solid #2C1A0E",
-                  borderRadius: "8px",
-                  height: "12px",
-                  overflow: "hidden"
-                }}>
-                  <div style={{
-                    background: "linear-gradient(90deg, #A8E060, #78C040)",
-                    height: "100%",
-                    width: `${progreso}%`,
-                    borderRadius: "6px"
-                  }} />
-                </div>
+            ) : myStake > 0 ? (
+              <div style={{ background: "#78C040", border: "2px solid #2C1A0E", borderRadius: "8px", padding: "12px", textAlign: "center" }}>
+                <p style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "14px", margin: 0 }}>
+                  Ya estas participando con {myStake} ticket(s)
+                </p>
               </div>
-
-              {/* Costo + botón */}
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <div style={{
-                  background: "#FFF8E8",
-                  border: "2px solid #2C1A0E",
-                  borderRadius: "8px",
-                  padding: "8px 14px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  flexShrink: 0
-                }}>
-                  <span style={{ fontSize: "16px" }}>🎟️</span>
-                  <span style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "18px" }}>{rifa.costo}</span>
-                </div>
-                <div style={{ flex: 1 }}>
-                  {showConfirm === rifa.id ? (
-                    <div style={{
-                      background: "#78C040",
-                      border: "2px solid #2C1A0E",
-                      borderRadius: "24px",
-                      padding: "12px",
-                      textAlign: "center",
-                      fontWeight: "bold",
-                      color: "#2C1A0E",
-                      fontSize: "14px"
-                    }}>
-                      ✅ ¡Participando!
-                    </div>
-                  ) : (
-                    <PixelButton
-                      variant={yaEntro ? "ghost" : puedeEntrar ? "green" : "ghost"}
-                      onClick={() => entrar(rifa)}
-                      disabled={!puedeEntrar}
-                    >
-                      {yaEntro ? "✅ Ya participas" : !puedeEntrar ? "Tickets insuficientes" : "Participar"}
-                    </PixelButton>
-                  )}
-                </div>
+            ) : (
+              <div style={{ background: "#FFF8E8", border: "2px solid #C4A870", borderRadius: "8px", padding: "12px", textAlign: "center" }}>
+                <p style={{ color: "#6B4A2A", fontSize: "13px", margin: 0 }}>
+                  Necesitas tickets para participar. Realiza pagos a comercios para ganarlos.
+                </p>
               </div>
+            )}
 
+            {error && <p style={{ color: "#CC1111", fontSize: "12px", margin: "8px 0 0 0", textAlign: "center" }}>{error}</p>}
+          </div>
+        </div>
+      )}
+
+      {/* Ganadores de la ultima rifa sorteada */}
+      {state?.drawn && realWinners.length > 0 && (
+        <div style={{ background: "#1A2472", border: "3px solid #0D1040", borderRadius: "10px", boxShadow: "4px 4px 0px #0D1040", marginBottom: "14px", overflow: "hidden" }}>
+          <div style={{ background: "#0D1040", borderBottom: "2px solid #0A0830", padding: "10px 16px", textAlign: "center" }}>
+            <p style={{ color: "#FFD84A", fontWeight: "bold", fontSize: "14px", margin: 0 }}>
+              Ganadores — Ronda {state.currentRound}
+            </p>
+            <p style={{ color: "#8899CC", fontSize: "11px", margin: "2px 0 0 0" }}>Premio: {state.prize}</p>
+          </div>
+          <div style={{ padding: "12px 16px", display: "flex", flexDirection: "column", gap: "8px" }}>
+            {realWinners.map((winner, i) => (
+              <div key={winner} style={{ display: "flex", alignItems: "center", gap: "10px", background: "rgba(255,255,255,0.05)", borderRadius: "8px", padding: "8px 12px" }}>
+                <span style={{ fontSize: "22px", minWidth: "28px" }}>{medals[i]}</span>
+                <span style={{ color: "#FFFFFF", fontSize: "11px", fontFamily: "monospace", wordBreak: "break-all" }}>{winner}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Sin rifa activa — explicacion */}
+      {!loading && !isOpen && (
+        <div style={panel}>
+          <div style={panelHeader}>
+            <span style={{ fontSize: "18px" }}>🎰</span>
+            <span style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "14px" }}>Proxima rifa</span>
+          </div>
+          <div style={{ padding: "16px" }}>
+            <p style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "18px", margin: "0 0 6px 0" }}>3 Helados Coco</p>
+            <p style={{ color: "#6B4A2A", fontSize: "13px", margin: "0 0 12px 0", lineHeight: 1.5 }}>
+              Se abre cuando se acumulen {txThreshold} pagos en comercios ArepaPay.
+            </p>
+            <div style={{ background: "#FFF8E8", border: "2px solid #D4B87A", borderRadius: "8px", padding: "10px 12px" }}>
+              <p style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "12px", margin: "0 0 6px 0" }}>Como funciona</p>
+              <p style={{ color: "#6B4A2A", fontSize: "12px", margin: 0, lineHeight: 1.7 }}>
+                1. Paga en comercios → ganas tickets por cada pago<br />
+                2. Al llegar a {txThreshold} pagos totales → rifa se abre<br />
+                3. Apuesta tus tickets (minimo 1, maximo los que tengas)<br />
+                4. Mas tickets apostas = mayor % de ganar<br />
+                5. Se sortea y el ganador recibe el premio fisico
+              </p>
             </div>
           </div>
-        );
-      })}
+        </div>
+      )}
 
-      {/* Aviso MVP */}
-      <div style={{
-        background: "#FFF8E8",
-        border: "2px solid #C4A870",
-        borderRadius: "10px",
-        padding: "12px 14px",
-        textAlign: "center"
-      }}>
+      <div style={{ background: "#FFF8E8", border: "2px solid #C4A870", borderRadius: "10px", padding: "12px 14px", textAlign: "center" }}>
         <p style={{ color: "#6B4A2A", fontSize: "12px", margin: 0, lineHeight: 1.5 }}>
-          🛠️ Los sorteos los decide el admin. Cuando se sorteen, los ganadores serán notificados directamente.
+          El sorteo es ejecutado por el admin. El ganador es contactado directamente.
         </p>
       </div>
-
     </div>
   );
 }

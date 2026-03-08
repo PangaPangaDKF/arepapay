@@ -18,7 +18,7 @@ contract DeployScript is Script {
         MerchantRegistry registry = new MerchantRegistry();
         RewardTicket     ticket   = new RewardTicket();
 
-        PaymentProcessor processor = new PaymentProcessor(address(registry), address(usdt));
+        PaymentProcessor processor = new PaymentProcessor(address(registry), address(usdt), address(ticket), address(0), address(0));
         new LiquidityManager(address(usdt), address(arepa));
 
         // Conectar RewardTicket con PaymentProcessor

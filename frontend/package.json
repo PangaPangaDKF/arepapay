@@ -12,9 +12,11 @@
   "dependencies": {
     "@web3modal/ethers": "^5.1.11",
     "ethers": "^6.16.0",
+    "jsqr": "^1.4.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "vercel": "^50.28.0",
     "vite-plugin-pwa": "^1.2.0"
   },
   "devDependencies": {

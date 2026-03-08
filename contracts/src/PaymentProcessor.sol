@@ -5,29 +5,75 @@ import { IERC20 }   from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Ownable }  from "@openzeppelin/contracts/access/Ownable.sol";
 import { MerchantRegistry } from "./MerchantRegistry.sol";
 
+interface IRewardTicket {
+    function mint(address to) external;
+}
+
+interface IRaffle {
+    function recordTransaction() external;
+}
+
+interface IInternetVoucher {
+    function mint(address to, uint256 minutes_) external;
+    function minutesPerPayment() external view returns (uint256);
+}
+
 contract PaymentProcessor is Ownable {
-    MerchantRegistry public registry;
-    IERC20 public usdt;
+    MerchantRegistry  public registry;
+    IERC20            public usdt;
+    IRewardTicket     public rewardTicket;
+    IRaffle           public raffle;
+    IInternetVoucher  public internetVoucher;
 
     event PaymentSent(address indexed from, address indexed to, uint256 amount);
 
-    constructor(address _registry, address _usdt) Ownable(msg.sender) {
-        registry = MerchantRegistry(_registry);
-        usdt = IERC20(_usdt);
+    constructor(
+        address _registry,
+        address _usdt,
+        address _rewardTicket,
+        address _raffle,
+        address _internetVoucher
+    ) Ownable(msg.sender) {
+        registry        = MerchantRegistry(_registry);
+        usdt            = IERC20(_usdt);
+        rewardTicket    = IRewardTicket(_rewardTicket);
+        raffle          = IRaffle(_raffle);
+        internetVoucher = IInternetVoucher(_internetVoucher);
     }
 
     function payMerchant(address _merchant, uint256 _amount) external {
-        // 1. Verificar que el comercio esté registrado y verificado por TI
         require(registry.isMerchant(_merchant), "Comercio no verificado en ArepaPay");
-        
-        // 2. Transferir USDT del usuario al comercio
         require(usdt.transferFrom(msg.sender, _merchant, _amount), "Fallo en la transferencia");
+
+        // 1 ticket al pagador y 1 al comercio
+        rewardTicket.mint(msg.sender);
+        rewardTicket.mint(_merchant);
+
+        // Minutos de internet al pagador
+        try internetVoucher.mint(msg.sender, internetVoucher.minutesPerPayment()) {} catch {}
+
+        // Registrar en sistema de rifas
+        try raffle.recordTransaction() {} catch {}
 
         emit PaymentSent(msg.sender, _merchant, _amount);
     }
 
-    // Función para actualizar el registro si decides cambiarlo en el futuro
-    function updateRegistry(address _newRegistry) external onlyOwner {
-        registry = MerchantRegistry(_newRegistry);
+    /* -----------------------------------------------------------------------
+     *  ADMIN
+     * ----------------------------------------------------------------------- */
+    function updateRegistry(address _new) external onlyOwner {
+        registry = MerchantRegistry(_new);
+    }
+
+    function updateRewardTicket(address _new) external onlyOwner {
+        rewardTicket = IRewardTicket(_new);
+    }
+
+    function updateRaffle(address _new) external onlyOwner {
+        raffle = IRaffle(_new);
+    }
+
+    function updateInternetVoucher(address _new) external onlyOwner {
+        internetVoucher = IInternetVoucher(_new);
     }
 }

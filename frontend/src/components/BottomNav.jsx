@@ -1,9 +1,9 @@
 const tabs = [
-  { id: "home",      emoji: "🏠", label: "Inicio"    },
-  { id: "send",      emoji: "📤", label: "Enviar"    },
-  { id: "receive",   emoji: "📥", label: "Recibir"   },
-  { id: "merchants", emoji: "🏪", label: "Comercios" },
-  { id: "raffles",   emoji: "🎰", label: "Rifas"     },
+  { id: "home",     emoji: "🏠", label: "Inicio"   },
+  { id: "send",     emoji: "📤", label: "Enviar"   },
+  { id: "receive",  emoji: "📥", label: "Recibir"  },
+  { id: "internet", emoji: "🌐", label: "Internet" },
+  { id: "raffles",  emoji: "🎰", label: "Rifas"    },
 ];
 
 export default function BottomNav({ active, onChange }) {

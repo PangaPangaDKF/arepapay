@@ -25,9 +25,9 @@ Please note that judges will not request access to private repositories. If judg
 |-----------|--------|-------|
 | Repo publico en GitHub | LISTO | https://github.com/PangaPangaDKF/arepapay |
 | README explicando el proyecto | FALTA | Necesita README completo con descripcion, screenshots, instrucciones |
-| Live MVP funcional | FALTA | Actualmente corre en local (ngrok). Necesita hosting permanente |
-| Web3 verificable en Fuji testnet | FALTA CRITICO | Contratos deployados en subnet local, no en Fuji |
-| Contratos verificados con explorer | FALTA | Fuji tiene Snowtrace explorer para verificar |
+| Live MVP funcional | LISTO | https://frontend-tau-ten-27.vercel.app |
+| Web3 verificable en Fuji testnet | LISTO | Contratos deployados en Fuji C-Chain (chainId 43113) |
+| Contratos verificados con explorer | LISTO | Ver links abajo en seccion de contratos |
 
 ---
 
@@ -79,6 +79,21 @@ rpcUrl:     "https://api.avax-test.network/ext/bc/C/rpc"
 - El concepto de "AREPA como gas" desaparece en Fuji (AVAX es el gas)
 - MockUSDT se puede distribuir desde el deployer a wallets de prueba
 - Todo lo demas funciona igual
+
+---
+
+## Contratos verificados en Snowtrace (Fuji testnet)
+
+| Contrato | Direccion | Explorer |
+|----------|-----------|---------|
+| MockUSDT | 0xcfefb29bd69c0af628a1d206c366133629011820 | https://testnet.snowscan.xyz/address/0xcfefb29bd69c0af628a1d206c366133629011820 |
+| MerchantRegistry | 0x53ac07432c22eee0ee6ce5c003bf198f4712bc0b | https://testnet.snowscan.xyz/address/0x53ac07432c22eee0ee6ce5c003bf198f4712bc0b |
+| RewardTicket | 0x5430B7598ea098eB2E217bebda1406805f142aEf | https://testnet.snowscan.xyz/address/0x5430B7598ea098eB2E217bebda1406805f142aEf |
+| Raffle | 0x3c25B5E7C32f258932071801Ea200BbDdd3A1CC0 | https://testnet.snowscan.xyz/address/0x3c25B5E7C32f258932071801Ea200BbDdd3A1CC0 |
+| InternetVoucher | 0xd72a6a47B342971380Fc02eF911103E09b47B8AD | https://testnet.snowscan.xyz/address/0xd72a6a47B342971380Fc02eF911103E09b47B8AD |
+| PaymentProcessor | 0x49A214bEfC497B2fe7F63609A1CdfD7492C6E215 | https://testnet.snowscan.xyz/address/0x49A214bEfC497B2fe7F63609A1CdfD7492C6E215 |
+| ArepaToken | 0x67b3a03cb0518bb3cb0d33e9951ba2764cb2b4fe | https://testnet.snowscan.xyz/address/0x67b3a03cb0518bb3cb0d33e9951ba2764cb2b4fe |
+| LiquidityManager | 0xe404e1d6b01971d0643494eeabc10d78521cf602 | https://testnet.snowscan.xyz/address/0xe404e1d6b01971d0643494eeabc10d78521cf602 |
 
 ---
 
