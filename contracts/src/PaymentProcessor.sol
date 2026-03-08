@@ -43,13 +43,13 @@ contract PaymentProcessor is Ownable {
 
     function payMerchant(address _merchant, uint256 _amount) external {
         require(registry.isMerchant(_merchant), "Comercio no verificado en ArepaPay");
+        require(msg.sender != _merchant, "No puedes pagarte a ti mismo");
         require(usdt.transferFrom(msg.sender, _merchant, _amount), "Fallo en la transferencia");
 
-        // 1 ticket al pagador y 1 al comercio
+        // Solo el pagador recibe el ticket — el comercio no participa en rifas
         rewardTicket.mint(msg.sender);
-        rewardTicket.mint(_merchant);
 
-        // Minutos de internet al pagador
+        // Minutos de internet solo al pagador
         try internetVoucher.mint(msg.sender, internetVoucher.minutesPerPayment()) {} catch {}
 
         // Registrar en sistema de rifas

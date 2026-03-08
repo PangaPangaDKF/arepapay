@@ -91,7 +91,7 @@ rpcUrl:     "https://api.avax-test.network/ext/bc/C/rpc"
 | RewardTicket | 0x5430B7598ea098eB2E217bebda1406805f142aEf | https://testnet.snowscan.xyz/address/0x5430B7598ea098eB2E217bebda1406805f142aEf |
 | Raffle | 0x3c25B5E7C32f258932071801Ea200BbDdd3A1CC0 | https://testnet.snowscan.xyz/address/0x3c25B5E7C32f258932071801Ea200BbDdd3A1CC0 |
 | InternetVoucher | 0xd72a6a47B342971380Fc02eF911103E09b47B8AD | https://testnet.snowscan.xyz/address/0xd72a6a47B342971380Fc02eF911103E09b47B8AD |
-| PaymentProcessor | 0x49A214bEfC497B2fe7F63609A1CdfD7492C6E215 | https://testnet.snowscan.xyz/address/0x49A214bEfC497B2fe7F63609A1CdfD7492C6E215 |
+| PaymentProcessor | 0xb10EE9c97Db6be098406618c2088eAC87e994483 | https://testnet.snowscan.xyz/address/0xb10EE9c97Db6be098406618c2088eAC87e994483 |
 | ArepaToken | 0x67b3a03cb0518bb3cb0d33e9951ba2764cb2b4fe | https://testnet.snowscan.xyz/address/0x67b3a03cb0518bb3cb0d33e9951ba2764cb2b4fe |
 | LiquidityManager | 0xe404e1d6b01971d0643494eeabc10d78521cf602 | https://testnet.snowscan.xyz/address/0xe404e1d6b01971d0643494eeabc10d78521cf602 |
 

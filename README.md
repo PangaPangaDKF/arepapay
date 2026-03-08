@@ -79,7 +79,7 @@ ArepaPay resuelve ambos con una sola app: el usuario conecta su MetaMask, tiene 
 | RewardTicket | `0x5430B7598ea098eB2E217bebda1406805f142aEf` | Tickets por transaccion |
 | Raffle | `0x3c25B5E7C32f258932071801Ea200BbDdd3A1CC0` | Rifas con 3 ganadores ponderados |
 | InternetVoucher | `0xd72a6a47B342971380Fc02eF911103E09b47B8AD` | Minutos de WiFi por pago |
-| PaymentProcessor | `0x49A214bEfC497B2fe7F63609A1CdfD7492C6E215` | Enruta pagos + mintea recompensas |
+| PaymentProcessor | `0xb10EE9c97Db6be098406618c2088eAC87e994483` | Enruta pagos + mintea recompensas |
 | ArepaToken | `0x67B3a03CB0518bB3CB0d33E9951Ba2764CB2B4FE` | Token nativo del ecosistema |
 | LiquidityManager | `0xe404e1D6B01971D0643494eEaBc10d78521cF602` | Pozo de premios |
 

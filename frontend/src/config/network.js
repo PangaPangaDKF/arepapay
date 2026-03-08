@@ -7,7 +7,7 @@ export const NETWORK = {
     mockUSDT:         "0xcfefb29bd69c0af628a1d206c366133629011820",
     merchantRegistry: "0x53ac07432c22eee0ee6ce5c003bf198f4712bc0b",
     rewardTicket:     "0x5430B7598ea098eB2E217bebda1406805f142aEf",
-    paymentProcessor: "0x49A214bEfC497B2fe7F63609A1CdfD7492C6E215",
+    paymentProcessor: "0xb10EE9c97Db6be098406618c2088eAC87e994483",
     raffle:           "0x3c25B5E7C32f258932071801Ea200BbDdd3A1CC0",
     internetVoucher:  "0xd72a6a47B342971380Fc02eF911103E09b47B8AD",
     liquidityManager: "0xe404e1d6b01971d0643494eeabc10d78521cf602"
