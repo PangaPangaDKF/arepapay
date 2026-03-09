@@ -242,12 +242,45 @@ export default function RafflesScreen({ tickets, provider, address, onBack, onTi
             <p style={{ color: "#8899CC", fontSize: "11px", margin: "2px 0 0 0" }}>Premio: {state.prize}</p>
           </div>
           <div style={{ padding: "12px 16px", display: "flex", flexDirection: "column", gap: "8px" }}>
-            {realWinners.map((winner, i) => (
-              <div key={winner} style={{ display: "flex", alignItems: "center", gap: "10px", background: "rgba(255,255,255,0.05)", borderRadius: "8px", padding: "8px 12px" }}>
-                <span style={{ fontSize: "22px", minWidth: "28px" }}>{medals[i]}</span>
-                <span style={{ color: "#FFFFFF", fontSize: "11px", fontFamily: "monospace", wordBreak: "break-all" }}>{winner}</span>
-              </div>
-            ))}
+            {realWinners.map((winner, i) => {
+              const isMe = address && winner.toLowerCase() === address.toLowerCase();
+              return (
+                <div key={winner} style={{
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  border: isMe ? "3px solid #FFD700" : "none",
+                  boxShadow: isMe ? "0 0 12px rgba(255,215,0,0.4)" : "none"
+                }}>
+                  <div style={{
+                    display: "flex", alignItems: "center", gap: "10px",
+                    background: isMe ? "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)" : "rgba(255,255,255,0.05)",
+                    padding: isMe ? "10px 14px" : "8px 12px"
+                  }}>
+                    <span style={{ fontSize: isMe ? "26px" : "22px", minWidth: "30px" }}>{medals[i]}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      {isMe && (
+                        <p style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "13px", margin: "0 0 2px 0" }}>
+                          ← TÚ
+                        </p>
+                      )}
+                      <span style={{ color: isMe ? "#2C1A0E" : "#FFFFFF", fontSize: "11px", fontFamily: "monospace", wordBreak: "break-all" }}>
+                        {winner.slice(0, 14)}...{winner.slice(-10)}
+                      </span>
+                    </div>
+                  </div>
+                  {isMe && (
+                    <div style={{ background: "#2C1A0E", padding: "10px 14px", textAlign: "center" }}>
+                      <p style={{ color: "#FFD84A", fontWeight: "bold", fontSize: "12px", margin: "0 0 4px 0" }}>
+                        🎁 Premio: {state.prize}
+                      </p>
+                      <p style={{ color: "#C89038", fontSize: "11px", margin: 0, lineHeight: 1.5 }}>
+                        📲 Muestra esta pantalla al equipo ArepaPay para reclamar tu premio
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
