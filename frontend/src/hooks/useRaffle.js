@@ -10,7 +10,7 @@ const RAFFLE_ABI = [
 
 export function useRaffle(provider, address) {
   const [state, setState]       = useState(null);
-  const [myStake, setMyStake]   = useState(0n);
+  const [myStake, setMyStake]   = useState(0);
   const [loading, setLoading]   = useState(true);
   const [entering, setEntering] = useState(false);
   const [error, setError]       = useState("");
