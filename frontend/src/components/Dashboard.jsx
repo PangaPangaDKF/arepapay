@@ -220,16 +220,27 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
             </div>
           </div>
 
+          {/* BOTON PAGAR */}
+          <button
+            onClick={() => { setSelectedMerchant(null); setActiveTab("send"); }}
+            style={{
+              width: "100%", background: "#CC1111", color: "white",
+              border: "3px solid #8A0A0A", borderRadius: "12px",
+              padding: "18px", fontSize: "20px", fontWeight: "900",
+              cursor: "pointer", fontFamily: "Inter, sans-serif",
+              boxShadow: "5px 5px 0px #8A0A0A",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
+              marginBottom: "14px", letterSpacing: "1px"
+            }}
+          >
+            <span style={{ fontSize: "26px" }}>💸</span>
+            PAGAR
+          </button>
+
           {/* COMERCIOS SOCIOS */}
           <div style={{ background: "#FFFFFF", border: "3px solid #C89038", borderRadius: "12px", boxShadow: "4px 4px 0px #C89038", marginBottom: "14px", overflow: "hidden" }}>
             <div style={{ background: "#FFF8E0", borderBottom: "2px solid #C89038", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span style={{ color: "#1A2472", fontSize: "13px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "1px" }}>Selecciona un comercio</span>
-              <button
-                onClick={() => { setSelectedMerchant(null); setActiveTab("send"); }}
-                style={{ background: "#CC1111", color: "white", border: "2px solid #8A0A0A", borderRadius: "8px", padding: "5px 12px", fontSize: "11px", fontWeight: "bold", cursor: "pointer", fontFamily: "Inter, sans-serif" }}
-              >
-                Otra dirección
-              </button>
             </div>
             <div style={{ padding: "14px" }}>
               {/* Socios principales (grandes) */}
