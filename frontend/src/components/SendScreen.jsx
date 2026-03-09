@@ -51,11 +51,15 @@ const inputStyle = {
 };
 
 const STEPS = { FORM: "form", CONFIRM: "confirm", SUCCESS: "success", ERROR: "error" };
+const BCV_RATE = 400; // Bs por 1 USDT
 
 export default function SendScreen({ provider, address, usdtBalance, onBack, onSuccess, prefilledTo = "", prefilledName = "", prefilledAmount = "" }) {
   const [step, setStep]           = useState(STEPS.FORM);
   const [to, setTo]               = useState(prefilledTo);
-  const [amount, setAmount]       = useState(prefilledAmount);
+  // bsInput: lo que escribe el usuario en Bs; usdtAmount: lo que se envía
+  const initBs = prefilledAmount ? String(Math.round(parseFloat(prefilledAmount) * BCV_RATE)) : "";
+  const [bsInput, setBsInput]     = useState(initBs);
+  const usdtAmount = bsInput ? (parseFloat(bsInput) / BCV_RATE).toFixed(6) : "";
   const [loading, setLoading]     = useState(false);
   const [txHash, setTxHash]       = useState("");
   const [errorMsg, setErrorMsg]   = useState("");
@@ -113,14 +117,16 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
   }
 
   const toValid     = isAddress(to);
-  const amountValid = parseFloat(amount) > 0 && parseFloat(amount) <= parseFloat(usdtBalance.replace(/\./g, "").replace(",", "."));
+  const usdtNum     = parseFloat(usdtAmount) || 0;
+  const balanceNum  = parseFloat(usdtBalance.replace(/\./g, "").replace(",", ".")) || 0;
+  const amountValid = usdtNum > 0 && usdtNum <= balanceNum;
   const canContinue = toValid && amountValid && !wrongChain;
 
   async function sendPayment() {
     setLoading(true);
     try {
       const signer = await provider.getSigner();
-      const value  = parseUnits(amount, 18);
+      const value  = parseUnits(usdtAmount, 18);
 
       if (isMerchantPay) {
         // Flujo comerciante: approve + payMerchant (2 txns)
@@ -166,8 +172,11 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
           </div>
           <div style={{ padding: "28px 20px" }}>
             <div style={{ fontSize: "56px", marginBottom: "12px" }}>✅</div>
-            <p style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "22px", margin: "0 0 6px 0" }}>
-              {amount} USDT
+            <p style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "28px", margin: "0 0 2px 0" }}>
+              {bsInput} Bs
+            </p>
+            <p style={{ color: "#6B4A2A", fontSize: "14px", margin: "0 0 6px 0" }}>
+              = {usdtNum.toFixed(2)} USDT
             </p>
             <p style={{ color: "#6B4A2A", fontSize: "13px", margin: "0 0 6px 0" }}>
               enviados a {merchantName || `${to.slice(0, 10)}...${to.slice(-8)}`}
@@ -232,7 +241,8 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
               </div>
             )}
 
-            <Row label="Monto" value={`${amount} USDT`} big />
+            <Row label="Monto" value={`${bsInput} Bs`} big />
+            <Row label="Equivale a" value={`${usdtNum.toFixed(2)} USDT`} />
             <Row label="Para"  value={merchantName || `${to.slice(0, 8)}...${to.slice(-6)}`} />
             <Row label="Red"   value="Avalanche Fuji" />
             {isMerchantPay && <Row label="Via" value="PaymentProcessor" />}
@@ -347,27 +357,37 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
             )}
           </div>
 
-          {/* Monto */}
+          {/* Monto en Bs */}
           <div>
             <label style={{ color: "#2C1A0E", fontSize: "14px", fontWeight: "bold", display: "block", marginBottom: "8px" }}>
               {prefilledAmount ? "Monto fijado por el comercio" : "Cuanto envias?"}
             </label>
-            <input
-              style={{
-                ...inputStyle,
-                fontSize: "24px",
-                ...(prefilledAmount ? { background: "#E8F0D8", borderColor: "#5A8A20", color: "#2C5A10", cursor: "not-allowed" } : {})
-              }}
-              placeholder="0.00"
-              type="number"
-              min="0"
-              value={amount}
-              readOnly={!!prefilledAmount}
-              onChange={prefilledAmount ? undefined : e => setAmount(e.target.value)}
-            />
-            <p style={{ color: "#6B4A2A", fontSize: "12px", margin: "6px 0 0 0" }}>
-              USDT{prefilledAmount && " — fijado por el comercio, no editable"}
-            </p>
+            <div style={{ position: "relative" }}>
+              <input
+                style={{
+                  ...inputStyle,
+                  fontSize: "28px",
+                  paddingRight: "56px",
+                  ...(prefilledAmount ? { background: "#E8F0D8", borderColor: "#5A8A20", color: "#2C5A10", cursor: "not-allowed" } : {})
+                }}
+                placeholder="0"
+                type="number"
+                min="0"
+                value={bsInput}
+                readOnly={!!prefilledAmount}
+                onChange={prefilledAmount ? undefined : e => setBsInput(e.target.value)}
+              />
+              <span style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", color: "#C89038", fontWeight: "900", fontSize: "16px" }}>Bs</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
+              <p style={{ color: "#6B4A2A", fontSize: "12px", margin: 0 }}>
+                {usdtAmount && usdtNum > 0 ? `= ${usdtNum.toFixed(2)} USDT` : "Ingresa un monto en Bolívares"}
+              </p>
+              <p style={{ color: "#8899CC", fontSize: "10px", margin: 0 }}>Tasa: {BCV_RATE} Bs/$</p>
+            </div>
+            {usdtNum > balanceNum && usdtNum > 0 && (
+              <p style={{ color: "#CC1111", fontSize: "12px", margin: "4px 0 0 0" }}>Saldo insuficiente</p>
+            )}
           </div>
 
           <PixelButton
