@@ -99,22 +99,31 @@ export function useWallet() {
   async function connect() {
     setError(null);
 
-    // Caso 1: browser interno de wallet (window.ethereum disponible)
     if (window.ethereum) {
       try {
-        try { await switchToArepaPay(); } catch (_) { /* continúa aunque falle */ }
-
         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+        if (!accounts || accounts.length === 0) {
+          setError("MetaMask no devolvió cuentas. Desbloquea tu wallet e intenta de nuevo.");
+          return;
+        }
         setAddress(accounts[0]);
         setProvider(new BrowserProvider(window.ethereum));
         setConnected(true);
+        return;
       } catch (e) {
-        setError("No se pudo conectar. Intenta de nuevo.");
+        const code = e?.code;
+        if (code === 4001) {
+          setError("Conexión rechazada. Acepta en tu wallet.");
+        } else if (code === -32002) {
+          setError("MetaMask tiene una solicitud pendiente. Abre MetaMask y acepta la solicitud.");
+        } else {
+          setError(`Error (${code ?? "?"}): ${e?.message?.slice(0, 80) ?? "desconocido"}`);
+        }
+        return;
       }
-      return;
     }
 
-    // Caso 2: Chrome externo → abre WalletConnect modal
+    // Sin window.ethereum → WalletConnect
     modal.open();
   }
 

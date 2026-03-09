@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useWallet } from "./hooks/useWallet";
 import Dashboard from "./components/Dashboard";
 import PixelButton from "./components/PixelButton";
@@ -39,8 +40,25 @@ function ArepaLogo({ size = 52 }) {
   );
 }
 
+const APP_URL = "frontend-tau-ten-27.vercel.app";
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
 export default function App() {
   const { address, provider, connected, connect, disconnect, error, switchChain } = useWallet();
+  const [connecting, setConnecting] = useState(false);
+  const [hasEthereum, setHasEthereum] = useState(!!window.ethereum);
+
+  // MetaMask puede inyectar window.ethereum después del primer render
+  useEffect(() => {
+    if (window.ethereum) { setHasEthereum(true); return; }
+    const t = setTimeout(() => setHasEthereum(!!window.ethereum), 800);
+    return () => clearTimeout(t);
+  }, []);
+
+  async function handleConnect() {
+    setConnecting(true);
+    try { await connect(); } finally { setConnecting(false); }
+  }
 
   // Modo comerciante — URL con ?merchant (sin necesidad de wallet)
   const isMerchantMode = new URLSearchParams(window.location.search).has("merchant");
@@ -142,9 +160,31 @@ export default function App() {
             La arepa es venezolana 🇻🇪
           </p>
 
-          <PixelButton variant="blue" onClick={connect}>
-            🔌 Conectar Wallet
-          </PixelButton>
+          {/* Botón principal: conectar si hay wallet, sino deep link */}
+          {hasEthereum ? (
+            <PixelButton variant="blue" onClick={handleConnect} disabled={connecting}>
+              {connecting ? "Conectando..." : "🔌 Conectar Wallet"}
+            </PixelButton>
+          ) : (
+            <PixelButton variant="blue" onClick={handleConnect} disabled={connecting}>
+              {connecting ? "Conectando..." : "🔌 Conectar Wallet"}
+            </PixelButton>
+          )}
+
+          {/* Deep link siempre visible en móvil */}
+          {isMobile && (
+            <a
+              href={`https://metamask.app.link/dapp/${APP_URL}`}
+              style={{ display: "block", marginTop: "10px", background: "#F6851B", color: "white", border: "3px solid #C96000", borderRadius: "10px", padding: "12px 16px", fontSize: "14px", fontWeight: "bold", textDecoration: "none", boxShadow: "3px 3px 0px #C96000", fontFamily: "Inter, sans-serif" }}
+            >
+              🦊 Abrir en MetaMask
+            </a>
+          )}
+
+          {/* Diagnóstico temporal */}
+          <p style={{ color: "#8899CC", fontSize: "10px", margin: "8px 0 0 0" }}>
+            wallet: {hasEthereum ? "✓ detectada" : "✗ no detectada"} · mobile: {isMobile ? "sí" : "no"}
+          </p>
 
           {error && (
             <p style={{ color: "#CC1111", fontSize: "12px", margin: "12px 0 0 0", lineHeight: 1.4 }}>

@@ -165,6 +165,7 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
           prefilledTo={selectedMerchant?.address}
           prefilledName={selectedMerchant?.name}
           prefilledAmount={selectedMerchant?.amount || ""}
+          switchChain={switchChain}
           onBack={() => { setActiveTab("home"); setSelectedMerchant(null); }}
           onSuccess={() => { setActiveTab("home"); setSelectedMerchant(null); refetch(); }}
         />
@@ -223,7 +224,7 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
           <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
             <button
               onClick={() => { setSelectedMerchant(null); setActiveTab("send"); }}
-              style={{ flex: 2, background: "#CC1111", color: "white", border: "3px solid #8A0A0A", borderRadius: "12px", padding: "16px", fontSize: "20px", fontWeight: "900", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "4px 4px 0px #8A0A0A", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", letterSpacing: "1px" }}
+              style={{ flex: 1, background: "#CC1111", color: "white", border: "3px solid #8A0A0A", borderRadius: "12px", padding: "16px", fontSize: "20px", fontWeight: "900", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "4px 4px 0px #8A0A0A", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "4px", letterSpacing: "1px" }}
             >
               <span style={{ fontSize: "22px" }}>💸</span>
               PAGAR
@@ -233,7 +234,7 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
               style={{ flex: 1, background: "#1A2472", color: "white", border: "3px solid #0D1040", borderRadius: "12px", padding: "16px", fontSize: "13px", fontWeight: "900", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "4px 4px 0px #0D1040", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "4px" }}
             >
               <span style={{ fontSize: "22px" }}>📷</span>
-              QR
+              Escanear QR
             </button>
           </div>
 
