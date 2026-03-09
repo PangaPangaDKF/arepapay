@@ -20,8 +20,8 @@ const panelHeader = {
   gap: "8px"
 };
 
-export default function RafflesScreen({ tickets, provider, address, onBack }) {
-  const { state, myStake, loading, entering, error, enter } = useRaffle(provider, address);
+export default function RafflesScreen({ tickets, provider, address, onBack, onTicketsChanged }) {
+  const { state, myStake, loading, entering, drawing, error, enter, draw } = useRaffle(provider, address, onTicketsChanged);
   const [ticketsToEnter, setTicketsToEnter] = useState(1);
 
   const txCount      = state?.txCount     ?? 0;
@@ -176,6 +176,18 @@ export default function RafflesScreen({ tickets, provider, address, onBack }) {
             )}
 
             {error && <p style={{ color: "#CC1111", fontSize: "12px", margin: "8px 0 0 0", textAlign: "center" }}>{error}</p>}
+
+            {/* Boton sortear — visible cuando hay participantes (solo funciona para el owner) */}
+            {state.participantCount > 0 && (
+              <div style={{ marginTop: "14px", borderTop: "2px dashed #C4A870", paddingTop: "14px" }}>
+                <PixelButton variant="red" onClick={draw} disabled={drawing}>
+                  {drawing ? "Sorteando..." : "🎲 Sortear ahora (Admin)"}
+                </PixelButton>
+                <p style={{ color: "#8899CC", fontSize: "10px", margin: "6px 0 0 0", textAlign: "center" }}>
+                  Solo el dueño del contrato puede ejecutar el sorteo
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}

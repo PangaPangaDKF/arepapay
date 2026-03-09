@@ -6,13 +6,15 @@ const RAFFLE_ABI = [
   "function getRaffleState() view returns (uint256 txCount, uint256 txThreshold, uint256 currentRound, bool isOpen, uint256 totalStaked, uint256 participantCount, address[3] winners, uint256 winnersCount, bool drawn, string prize)",
   "function myStake(address user) view returns (uint256)",
   "function enter(uint256 amount) external",
+  "function draw() external",
 ];
 
-export function useRaffle(provider, address) {
+export function useRaffle(provider, address, onTicketsChanged) {
   const [state, setState]       = useState(null);
   const [myStake, setMyStake]   = useState(0);
   const [loading, setLoading]   = useState(true);
   const [entering, setEntering] = useState(false);
+  const [drawing, setDrawing]   = useState(false);
   const [error, setError]       = useState("");
 
   const fetch = useCallback(async () => {
@@ -59,6 +61,7 @@ export function useRaffle(provider, address) {
       const tx = await raffle.enter(BigInt(ticketAmount));
       await tx.wait();
       await fetch();
+      onTicketsChanged?.(); // refresca saldo de tickets en Dashboard
     } catch (e) {
       setError(e?.reason || e?.message || "Error desconocido");
     } finally {
@@ -66,5 +69,22 @@ export function useRaffle(provider, address) {
     }
   }
 
-  return { state, myStake, loading, entering, error, refetch: fetch, enter };
+  async function draw() {
+    if (!provider) return;
+    setDrawing(true);
+    setError("");
+    try {
+      const signer = await provider.getSigner();
+      const raffle = new Contract(NETWORK.contracts.raffle, RAFFLE_ABI, signer);
+      const tx = await raffle.draw();
+      await tx.wait();
+      await fetch();
+    } catch (e) {
+      setError(e?.reason || e?.message || "Solo el owner puede sortear");
+    } finally {
+      setDrawing(false);
+    }
+  }
+
+  return { state, myStake, loading, entering, drawing, error, refetch: fetch, enter, draw };
 }
