@@ -140,6 +140,7 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
     try {
       const signer = await provider.getSigner();
       const value  = parseUnits(usdtAmount, 18);
+      let finalTxHash = "";
 
       if (isMerchantPay) {
         // Flujo comerciante: approve + payMerchant (2 txns)
@@ -150,17 +151,16 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
         const processor = new Contract(NETWORK.contracts.paymentProcessor, PAYMENT_PROCESSOR_ABI, signer);
         const tx        = await processor.payMerchant(to, value);
         await tx.wait();
-        setTxHash(tx.hash);
+        finalTxHash = tx.hash;
       } else {
         // Flujo P2P: transfer directo
         const usdt = new Contract(NETWORK.contracts.mockUSDT, USDT_ABI, signer);
         const tx   = await usdt.transfer(to, value);
         await tx.wait();
-        setTxHash(tx.hash);
+        finalTxHash = tx.hash;
       }
 
-      setStep(STEPS.SUCCESS);
-      onSuccess?.(); // refetch balances, pero NO navega (ver modal)
+      onSuccess?.({ bsInput, usdtNum: parseFloat(usdtAmount), merchantName, to, isMerchantPay, txHash: finalTxHash });
     } catch (e) {
       console.error(e);
       setErrorMsg(e?.reason || e?.message || "Error desconocido");
@@ -173,90 +173,6 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
   // ─── SCANNER ───
   if (showScanner) {
     return <QRScanner onScan={handleScan} onClose={() => setShowScanner(false)} />;
-  }
-
-  // ─── COMPROBANTE MODAL (overlay fijo hasta que el usuario lo cierra) ───
-  if (step === STEPS.SUCCESS) {
-    return (
-      <div style={{
-        position: "fixed", inset: 0, zIndex: 9999,
-        background: "rgba(0,0,0,0.82)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "20px"
-      }}>
-        <div style={{
-          background: "#FFF8E0",
-          border: "4px solid #C89038",
-          borderRadius: "20px",
-          boxShadow: "0 0 0 4px #2C1A0E",
-          width: "100%",
-          maxWidth: "380px",
-          overflow: "hidden",
-          textAlign: "center"
-        }}>
-          {/* Header verde */}
-          <div style={{ background: "#1A7A1A", padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-            <span style={{ fontSize: "20px" }}>✅</span>
-            <span style={{ color: "#FFFFFF", fontWeight: "900", fontSize: "15px", letterSpacing: "1px" }}>PAGO CONFIRMADO</span>
-          </div>
-
-          {/* Cuerpo del comprobante */}
-          <div style={{ padding: "28px 24px 20px 24px" }}>
-            {/* Monto grande */}
-            <p style={{ color: "#8899CC", fontSize: "12px", margin: "0 0 4px 0", fontWeight: "600" }}>MONTO PAGADO</p>
-            <p style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "48px", margin: "0 0 2px 0", lineHeight: 1 }}>
-              {parseFloat(bsInput).toLocaleString("es-VE")}
-            </p>
-            <p style={{ color: "#CC1111", fontWeight: "900", fontSize: "20px", margin: "0 0 6px 0" }}>Bolívares</p>
-            <p style={{ color: "#6B4A2A", fontSize: "14px", margin: "0 0 20px 0" }}>
-              = <strong>{usdtNum.toFixed(2)} USDT</strong>
-            </p>
-
-            {/* Separador */}
-            <div style={{ borderTop: "2px dashed #C89038", margin: "0 0 16px 0" }} />
-
-            {/* Destinatario */}
-            <p style={{ color: "#8899CC", fontSize: "11px", margin: "0 0 4px 0", fontWeight: "600" }}>
-              {isMerchantPay ? "COMERCIO" : "ENVIADO A"}
-            </p>
-            {isMerchantPay && (
-              <div style={{ display: "inline-block", background: "#1A2472", color: "#FFD84A", fontSize: "11px", fontWeight: "bold", padding: "3px 10px", borderRadius: "6px", marginBottom: "6px" }}>
-                🏪 Comercio verificado ArepaPay
-              </div>
-            )}
-            <p style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "18px", margin: "0 0 4px 0" }}>
-              {merchantName || `${to.slice(0, 8)}...${to.slice(-6)}`}
-            </p>
-            {merchantName && (
-              <p style={{ color: "#8899CC", fontSize: "11px", margin: "0 0 16px 0", fontFamily: "monospace" }}>
-                {to.slice(0, 10)}...{to.slice(-8)}
-              </p>
-            )}
-
-            {/* TX */}
-            {txHash && (
-              <>
-                <div style={{ borderTop: "2px dashed #C89038", margin: "0 0 12px 0" }} />
-                <p style={{ color: "#8899CC", fontSize: "10px", wordBreak: "break-all", margin: "0 0 16px 0" }}>
-                  TX: {txHash.slice(0, 22)}...{txHash.slice(-6)}
-                </p>
-              </>
-            )}
-
-            {/* Nota */}
-            <div style={{ background: "#FFF0D0", border: "2px solid #C89038", borderRadius: "8px", padding: "10px 12px", marginBottom: "20px" }}>
-              <p style={{ color: "#6B4A2A", fontSize: "11px", margin: 0, lineHeight: 1.5 }}>
-                📱 Muestra esta pantalla al comerciante como comprobante de pago
-              </p>
-            </div>
-
-            <PixelButton variant="blue" onClick={onBack}>
-              Continuar →
-            </PixelButton>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   // ─── ERROR ───

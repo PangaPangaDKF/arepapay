@@ -113,6 +113,7 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
   const [activeTab, setActiveTab]               = useState("home");
   const [selectedMerchant, setSelectedMerchant] = useState(null);
   const [showScanner, setShowScanner]           = useState(false);
+  const [paymentResult, setPaymentResult]       = useState(null);
 
   const shortAddr = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "";
   const bsEquivalent = loading ? null : Math.round(parseFloat(usdtBalance.replace(/\./g, "").replace(",", ".")) * BCV_RATE);
@@ -134,6 +135,75 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
 
   if (showScanner) {
     return <QRScanner onScan={handleQRScan} onClose={() => setShowScanner(false)} />;
+  }
+
+  // ─── COMPROBANTE DE PAGO ───
+  if (paymentResult) {
+    const { bsInput, usdtNum, merchantName, to, isMerchantPay, txHash } = paymentResult;
+    return (
+      <div style={{ minHeight: "100vh", maxWidth: "420px", margin: "0 auto", background: "#1A1A2E", fontFamily: "Inter, sans-serif", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", boxSizing: "border-box" }}>
+        <div style={{ background: "#FFF8E0", border: "4px solid #C89038", borderRadius: "20px", boxShadow: "0 0 0 4px #2C1A0E, 8px 8px 0px #2C1A0E", width: "100%", overflow: "hidden", textAlign: "center" }}>
+
+          {/* Header verde */}
+          <div style={{ background: "#1A7A1A", padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+            <span style={{ fontSize: "24px" }}>✅</span>
+            <span style={{ color: "#FFFFFF", fontWeight: "900", fontSize: "16px", letterSpacing: "2px" }}>PAGO CONFIRMADO</span>
+          </div>
+
+          <div style={{ padding: "28px 24px 24px 24px" }}>
+            {/* Monto */}
+            <p style={{ color: "#8899CC", fontSize: "11px", margin: "0 0 6px 0", fontWeight: "700", letterSpacing: "2px" }}>MONTO PAGADO</p>
+            <p style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "52px", margin: "0 0 2px 0", lineHeight: 1 }}>
+              {parseFloat(bsInput).toLocaleString("es-VE")}
+            </p>
+            <p style={{ color: "#CC1111", fontWeight: "900", fontSize: "22px", margin: "0 0 8px 0" }}>Bolívares</p>
+            <p style={{ color: "#6B4A2A", fontSize: "15px", margin: "0 0 24px 0" }}>
+              = <strong>{usdtNum.toFixed(2)} USDT</strong>
+            </p>
+
+            <div style={{ borderTop: "2px dashed #C89038", margin: "0 0 18px 0" }} />
+
+            {/* Destinatario */}
+            <p style={{ color: "#8899CC", fontSize: "11px", margin: "0 0 6px 0", fontWeight: "700", letterSpacing: "2px" }}>
+              {isMerchantPay ? "COMERCIO" : "ENVIADO A"}
+            </p>
+            {isMerchantPay && (
+              <div style={{ display: "inline-block", background: "#1A2472", color: "#FFD84A", fontSize: "11px", fontWeight: "bold", padding: "4px 12px", borderRadius: "6px", marginBottom: "8px" }}>
+                🏪 Comercio verificado ArepaPay
+              </div>
+            )}
+            <p style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "20px", margin: "0 0 4px 0" }}>
+              {merchantName || `${to.slice(0, 8)}...${to.slice(-6)}`}
+            </p>
+            {merchantName && (
+              <p style={{ color: "#8899CC", fontSize: "11px", margin: "0 0 20px 0", fontFamily: "monospace" }}>
+                {to.slice(0, 10)}...{to.slice(-8)}
+              </p>
+            )}
+
+            {txHash && (
+              <>
+                <div style={{ borderTop: "2px dashed #C89038", margin: "0 0 14px 0" }} />
+                <p style={{ color: "#8899CC", fontSize: "10px", wordBreak: "break-all", margin: "0 0 18px 0", fontFamily: "monospace" }}>
+                  TX: {txHash.slice(0, 22)}...{txHash.slice(-6)}
+                </p>
+              </>
+            )}
+
+            {/* Nota comprobante */}
+            <div style={{ background: "#FFF0D0", border: "2px solid #C89038", borderRadius: "10px", padding: "12px 14px", marginBottom: "24px" }}>
+              <p style={{ color: "#6B4A2A", fontSize: "12px", margin: 0, lineHeight: 1.6, fontWeight: "600" }}>
+                📱 Muestra esta pantalla al comerciante como comprobante de pago
+              </p>
+            </div>
+
+            <PixelButton variant="blue" onClick={() => setPaymentResult(null)}>
+              Continuar →
+            </PixelButton>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -167,7 +237,7 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
           prefilledAmount={selectedMerchant?.amount || ""}
           switchChain={switchChain}
           onBack={() => { setActiveTab("home"); setSelectedMerchant(null); }}
-          onSuccess={() => { refetch(); }}
+          onSuccess={(result) => { refetch(); setPaymentResult(result); setActiveTab("home"); setSelectedMerchant(null); }}
         />
       )}
       {activeTab === "receive"   && <ReceiveScreen address={address} onBack={() => setActiveTab("home")} />}
