@@ -7,7 +7,7 @@ const ERC20_ABI = [
 ];
 
 export function useBalances(provider, address) {
-  const [usdtBalance, setUsdtBalance]       = useState("0.00");
+  const [usdtBalance, setUsdtBalance]       = useState("0");
   const [arepaBalance, setArepaBalance]     = useState("0.00");
   const [tickets, setTickets]               = useState(0);
   const [internetMinutes, setInternetMinutes] = useState(0);
@@ -33,7 +33,7 @@ export function useBalances(provider, address) {
         usdt.balanceOf(NETWORK.contracts.liquidityManager)
       ]);
 
-      setUsdtBalance(parseFloat(formatUnits(rawUsdt,   18)).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+      setUsdtBalance(parseFloat(formatUnits(rawUsdt,   18)).toLocaleString("es-VE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
       setArepaBalance(parseFloat(formatUnits(rawNative, 18)).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 4 }));
       setTickets(Number(rawTickets));
       setInternetMinutes(Number(rawMinutes));
