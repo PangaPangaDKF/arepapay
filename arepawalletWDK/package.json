@@ -1,0 +1,18 @@
+{
+  "name": "arepawallet-wdk",
+  "version": "0.1.0",
+  "description": "ArepaPay Embedded Wallet — Wallet Developer Kit (WDK). No requiere MetaMask. El usuario crea y controla su propia wallet directamente en la app.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/index.js",
+    "test": "echo 'Tests pendientes'"
+  },
+  "dependencies": {
+    "ethers": "^6.4.0"
+  },
+  "keywords": ["avalanche", "embedded-wallet", "wdk", "arepapay", "venezuela"],
+  "author": "PangaPangaDKF",
+  "license": "MIT",
+  "status": "WIP — base structure only, not production ready"
+}
