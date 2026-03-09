@@ -155,115 +155,80 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
 
       {/* BODY PRINCIPAL */}
       {activeTab !== "send" && activeTab !== "receive" && activeTab !== "internet" && activeTab !== "raffles" && activeTab !== "merchants" && (
-        <div style={{ padding: "16px" }}>
+        <div style={{ padding: "12px 16px" }}>
 
           {fetchError && (
-            <div style={{ background: "#FFF0F0", border: "3px solid #CC1111", borderRadius: "10px", padding: "14px 16px", marginBottom: "14px", textAlign: "center" }}>
-              <p style={{ color: "#CC1111", fontSize: "11px", margin: 0, wordBreak: "break-all" }}>⚠️ {fetchError}</p>
+            <div style={{ background: "#FFF0F0", border: "2px solid #CC1111", borderRadius: "8px", padding: "8px 12px", marginBottom: "10px", textAlign: "center" }}>
+              <p style={{ color: "#CC1111", fontSize: "11px", margin: 0 }}>⚠️ {fetchError}</p>
             </div>
           )}
 
-          {/* BALANCE USDT */}
-          <div style={{ background: "#1A2472", border: "3px solid #0D1040", borderRadius: "12px", boxShadow: "4px 4px 0px #0D1040", marginBottom: "14px", overflow: "hidden" }}>
-            <div style={{ height: "8px", ...CHECKER }} />
-            <div style={{ padding: "16px", textAlign: "center" }}>
-              <p style={{ color: "#8899CC", fontSize: "11px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 8px 0" }}>
-                Tu Saldo
-              </p>
-              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: "8px" }}>
-                <span style={{ color: "#FFFFFF", fontSize: "46px", fontWeight: "900", lineHeight: 1 }}>{loading ? "—" : usdtBalance}</span>
-                <span style={{ color: "#CC1111", fontSize: "20px", fontWeight: "bold" }}>USDT</span>
+          {/* BALANCE USDT — compacto horizontal */}
+          <div style={{ background: "#1A2472", border: "3px solid #0D1040", borderRadius: "12px", boxShadow: "4px 4px 0px #0D1040", marginBottom: "10px", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <p style={{ color: "#8899CC", fontSize: "10px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "1px", margin: "0 0 2px 0" }}>Tu Saldo</p>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+                <span style={{ color: "#FFFFFF", fontSize: "36px", fontWeight: "900", lineHeight: 1 }}>{loading ? "—" : usdtBalance}</span>
+                <span style={{ color: "#CC1111", fontSize: "16px", fontWeight: "bold" }}>USDT</span>
               </div>
-              {!loading && bsEquivalent !== null && (
-                <p style={{ color: "#FFD84A", fontSize: "18px", fontWeight: "bold", margin: "6px 0 0 0" }}>
-                  ≈ {bsEquivalent.toLocaleString("es-VE")} Bs
-                </p>
-              )}
-              <p style={{ color: "#8899CC", fontSize: "10px", margin: "4px 0 0 0" }}>
-                Tasa BCV: {BCV_RATE} Bs/$ USDT
-              </p>
             </div>
-            <div style={{ height: "8px", ...CHECKER }} />
+            <div style={{ textAlign: "right" }}>
+              {!loading && bsEquivalent !== null && (
+                <p style={{ color: "#FFD84A", fontSize: "22px", fontWeight: "900", margin: "0 0 2px 0" }}>{bsEquivalent.toLocaleString("es-VE")} Bs</p>
+              )}
+              <p style={{ color: "#8899CC", fontSize: "10px", margin: 0 }}>Tasa: {BCV_RATE} Bs/$</p>
+            </div>
           </div>
 
-          {/* RPG STATS — AREPA + TICKETS + INTERNET */}
-          <div style={{
-            background: "#0D1040",
-            border: "3px solid #2C1A0E",
-            borderRadius: "12px",
-            boxShadow: "4px 4px 0px #2C1A0E",
-            padding: "10px 16px",
-            marginBottom: "14px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-around",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <ArepaLogo size={24} />
-              <span style={{ color: "#FFD84A", fontWeight: "900", fontSize: "15px" }}>{loading ? "—" : arepaBalance}</span>
+          {/* STATS — AVAX + TICKETS + INTERNET */}
+          <div style={{ background: "#0D1040", border: "3px solid #2C1A0E", borderRadius: "10px", boxShadow: "3px 3px 0px #2C1A0E", padding: "8px 16px", marginBottom: "10px", display: "flex", alignItems: "center", justifyContent: "space-around" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <ArepaLogo size={20} />
+              <span style={{ color: "#FFD84A", fontWeight: "900", fontSize: "13px" }}>{loading ? "—" : arepaBalance}</span>
             </div>
-            <div style={{ width: "2px", height: "28px", background: "#1A2472" }} />
-            <div
-              style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
-              onClick={() => setActiveTab("raffles")}
-            >
-              <span style={{ fontSize: "20px" }}>🎟️</span>
-              <span style={{ color: "#FFD84A", fontWeight: "900", fontSize: "15px" }}>{loading ? "—" : tickets}</span>
+            <div style={{ width: "2px", height: "22px", background: "#1A2472" }} />
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", cursor: "pointer" }} onClick={() => setActiveTab("raffles")}>
+              <span style={{ fontSize: "17px" }}>🎟️</span>
+              <span style={{ color: "#FFD84A", fontWeight: "900", fontSize: "13px" }}>{loading ? "—" : tickets}</span>
             </div>
-            <div style={{ width: "2px", height: "28px", background: "#1A2472" }} />
-            <div
-              style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}
-              onClick={() => setActiveTab("internet")}
-            >
-              <span style={{ fontSize: "20px" }}>🌐</span>
-              <span style={{ color: "#FFD84A", fontWeight: "900", fontSize: "15px" }}>{loading ? "—" : `${internetMinutes}m`}</span>
+            <div style={{ width: "2px", height: "22px", background: "#1A2472" }} />
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", cursor: "pointer" }} onClick={() => setActiveTab("internet")}>
+              <span style={{ fontSize: "17px" }}>🌐</span>
+              <span style={{ color: "#FFD84A", fontWeight: "900", fontSize: "13px" }}>{loading ? "—" : `${internetMinutes}m`}</span>
             </div>
           </div>
 
           {/* BOTON PAGAR */}
           <button
             onClick={() => { setSelectedMerchant(null); setActiveTab("send"); }}
-            style={{
-              width: "100%", background: "#CC1111", color: "white",
-              border: "3px solid #8A0A0A", borderRadius: "12px",
-              padding: "18px", fontSize: "20px", fontWeight: "900",
-              cursor: "pointer", fontFamily: "Inter, sans-serif",
-              boxShadow: "5px 5px 0px #8A0A0A",
-              display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
-              marginBottom: "14px", letterSpacing: "1px"
-            }}
+            style={{ width: "100%", background: "#CC1111", color: "white", border: "3px solid #8A0A0A", borderRadius: "12px", padding: "16px", fontSize: "22px", fontWeight: "900", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "5px 5px 0px #8A0A0A", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "10px", letterSpacing: "1px" }}
           >
-            <span style={{ fontSize: "26px" }}>💸</span>
+            <span style={{ fontSize: "24px" }}>💸</span>
             PAGAR
           </button>
 
-          {/* COMERCIOS SOCIOS */}
-          <div style={{ background: "#FFFFFF", border: "3px solid #C89038", borderRadius: "12px", boxShadow: "4px 4px 0px #C89038", marginBottom: "14px", overflow: "hidden" }}>
-            <div style={{ background: "#FFF8E0", borderBottom: "2px solid #C89038", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ color: "#1A2472", fontSize: "13px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "1px" }}>Selecciona un comercio</span>
+          {/* COMERCIOS — fila horizontal */}
+          <div style={{ background: "#FFFFFF", border: "3px solid #C89038", borderRadius: "12px", boxShadow: "4px 4px 0px #C89038", overflow: "hidden" }}>
+            <div style={{ background: "#FFF8E0", borderBottom: "2px solid #C89038", padding: "7px 14px" }}>
+              <span style={{ color: "#1A2472", fontSize: "11px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "1px" }}>Comercios</span>
             </div>
-            <div style={{ padding: "14px" }}>
-              {/* Socios principales (grandes) */}
-              <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-                {MERCHANTS.filter(m => m.big).map(m => (
-                  <MerchantCard
-                    key={m.id}
-                    big
-                    emoji={m.emoji}
-                    name={m.name}
-                    category={m.category}
-                    onClick={() => { setSelectedMerchant(m); setActiveTab("send"); }}
-                  />
-                ))}
-              </div>
-              {/* Artesanales */}
-              <div style={{ display: "flex", gap: "8px" }}>
-                {MERCHANTS.filter(m => !m.big).map(m => (
-                  <MerchantCard key={m.id} emoji={m.emoji} name={m.name} onClick={() => { setSelectedMerchant(m); setActiveTab("send"); }} />
-                ))}
-                <MerchantCard emoji="🎂" name="Tortas Mafe" coming />
-                <MerchantCard emoji="🍦" name="Helados Coco" coming />
-              </div>
+            <div style={{ display: "flex", gap: "8px", padding: "10px 12px", overflowX: "auto" }}>
+              {MERCHANTS.map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => { setSelectedMerchant(m); setActiveTab("send"); }}
+                  style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", background: "#FFF8E0", border: "2px solid #C89038", borderRadius: "10px", padding: "8px 10px", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "2px 2px 0px #C89038", minWidth: "64px" }}
+                >
+                  <span style={{ fontSize: "26px" }}>{m.emoji}</span>
+                  <span style={{ fontSize: "10px", fontWeight: "bold", color: "#2C1A0E", textAlign: "center" }}>{m.name.split(" ")[0]}</span>
+                </button>
+              ))}
+              {[{ emoji: "🎂", name: "Tortas" }, { emoji: "🍦", name: "Helados" }].map(c => (
+                <div key={c.name} style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", background: "#F0F0F0", border: "2px solid #CCC", borderRadius: "10px", padding: "8px 10px", minWidth: "64px", opacity: 0.5 }}>
+                  <span style={{ fontSize: "26px" }}>{c.emoji}</span>
+                  <span style={{ fontSize: "9px", fontWeight: "bold", color: "#999", textAlign: "center" }}>Pronto</span>
+                </div>
+              ))}
             </div>
           </div>
 
