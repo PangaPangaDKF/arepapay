@@ -168,3 +168,28 @@ No hay usuarios activos todavia — es un hackathon. Pero la infraestructura est
 ArepaPay es un sistema de pagos P2P con USDT para Venezuela, construido sobre Avalanche, donde los fondos siempre estan en la wallet del usuario (autocustodia real), los comercios reciben pagos directos sin intermediario, y los usuarios ganan tickets de rifa por cada transaccion — creando un loop de incentivos que beneficia a toda la red.
 
 **El problema es real. La solucion esta deployada. El equipo lo vive.**
+
+---
+
+## Estado actualizado — Marzo 2026
+
+### Lo que funciona HOY en produccion:
+- ✅ Conexion MetaMask mobile (browser nativo + deep link)
+- ✅ Dashboard con balance USDT, tickets, AVAX
+- ✅ Enviar USDT en Bolivares con conversion automatica (tasa BCV 400 Bs/$)
+- ✅ Pago a comercios via PaymentProcessor (approve + payMerchant, 2 txns)
+- ✅ Pago P2P directo (transfer ERC20)
+- ✅ Comprobante de pago estilo banco (pantalla completa, no se puede esquivar)
+- ✅ Escanear QR del comerciante desde la app
+- ✅ Panel de comerciante sin wallet (genera QR de cobro en Bs)
+- ✅ URL de demo pre-configurada para video: ?merchant&id=agua&bs=350
+- ✅ Rifas: apostar tickets, ver progreso, sortear (admin), ver ganadores
+- ✅ Badge de ganador para el usuario que gano la rifa (con instrucciones de reclamo)
+- ✅ Contactos guardados en localStorage
+- ✅ Vouchers de internet (InternetVoucher contract)
+
+### Demo URL para jueces:
+- App principal: https://frontend-tau-ten-27.vercel.app
+- Panel comerciante: https://frontend-tau-ten-27.vercel.app?merchant
+- Demo pre-configurado: https://frontend-tau-ten-27.vercel.app/?merchant&id=agua&bs=350
+- Deep link MetaMask mobile: https://metamask.app.link/dapp/frontend-tau-ten-27.vercel.app

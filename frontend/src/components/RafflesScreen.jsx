@@ -34,6 +34,8 @@ export default function RafflesScreen({ tickets, provider, address, onBack, onTi
   const ZERO_ADDR    = "0x0000000000000000000000000000000000000000";
   const realWinners  = (state?.winners ?? []).slice(0, state?.winnersCount ?? 0).filter(w => w !== ZERO_ADDR);
   const medals       = ["🥇", "🥈", "🥉"];
+  const myWinnerIndex = address ? realWinners.findIndex(w => w.toLowerCase() === address.toLowerCase()) : -1;
+  const iWon         = myWinnerIndex !== -1 && state?.drawn;
 
   return (
     <div style={{ padding: "16px", paddingBottom: "80px" }}>
@@ -43,6 +45,44 @@ export default function RafflesScreen({ tickets, provider, address, onBack, onTi
       >
         ← Volver
       </button>
+
+      {/* BANNER GANADOR — visible solo si el usuario conectado ganó */}
+      {iWon && (
+        <div style={{
+          background: "linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)",
+          border: "4px solid #2C1A0E",
+          borderRadius: "14px",
+          boxShadow: "6px 6px 0px #2C1A0E",
+          marginBottom: "16px",
+          overflow: "hidden",
+          textAlign: "center"
+        }}>
+          <div style={{ background: "#2C1A0E", padding: "10px 16px" }}>
+            <p style={{ color: "#FFD700", fontWeight: "900", fontSize: "16px", letterSpacing: "2px", margin: 0 }}>
+              {medals[myWinnerIndex]} ¡GANASTE LA RIFA!
+            </p>
+          </div>
+          <div style={{ padding: "20px 16px" }}>
+            <p style={{ color: "#2C1A0E", fontWeight: "900", fontSize: "22px", margin: "0 0 4px 0" }}>
+              {state.prize}
+            </p>
+            <p style={{ color: "#5A3500", fontSize: "13px", margin: "0 0 16px 0", lineHeight: 1.5 }}>
+              Ronda #{state.currentRound} · Posición {myWinnerIndex + 1}
+            </p>
+            <div style={{ background: "rgba(0,0,0,0.12)", borderRadius: "10px", padding: "12px 14px", marginBottom: "14px" }}>
+              <p style={{ color: "#2C1A0E", fontSize: "12px", margin: 0, lineHeight: 1.6, fontWeight: "600" }}>
+                📲 Muestra esta pantalla para reclamar tu premio.<br />
+                El equipo ArepaPay te contactará para la entrega.
+              </p>
+            </div>
+            <div style={{ background: "#2C1A0E", borderRadius: "8px", padding: "8px 14px" }}>
+              <p style={{ color: "#FFD84A", fontSize: "10px", margin: 0, fontFamily: "monospace" }}>
+                {address.slice(0, 14)}...{address.slice(-10)}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mis tickets */}
       <div style={{
