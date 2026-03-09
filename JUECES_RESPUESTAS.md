@@ -118,7 +118,7 @@ Paso necesario para escala real:
 
 Ser transparentes con los jueces sobre el estado real:
 
-1. **Tickets al pagar a comercio**: el balance de tickets se muestra, pero `payMerchant` no mintea tickets todavia. Requiere actualizar `PaymentProcessor` para llamar a `RewardTicket.mint()`. Esta pendiente.
+1. **Tickets al pagar a comercio**: ✅ Funciona. `payMerchant` llama a `RewardTicket.mint(msg.sender)` — el pagador recibe su ticket on-chain. Solo el pagador recibe el ticket; el comercio no participa en rifas (decision de diseño).
 
 2. **Red de prueba**: todo corre en Fuji (testnet). El USDT es MockUSDT con faucet publico. Para produccion se necesita USDT.e oficial y red principal.
 

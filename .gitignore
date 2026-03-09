@@ -9,3 +9,7 @@ subnet/
 .env
 .env*
 .DS_Store
+.vercel
+
+# Archivos internos — no deben estar en el repo público
+CONTEXTO_ACTUAL.md

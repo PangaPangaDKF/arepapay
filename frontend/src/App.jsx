@@ -181,11 +181,6 @@ export default function App() {
             </a>
           )}
 
-          {/* Diagnóstico temporal */}
-          <p style={{ color: "#8899CC", fontSize: "10px", margin: "8px 0 0 0" }}>
-            wallet: {hasEthereum ? "✓ detectada" : "✗ no detectada"} · mobile: {isMobile ? "sí" : "no"}
-          </p>
-
           {error && (
             <p style={{ color: "#CC1111", fontSize: "12px", margin: "12px 0 0 0", lineHeight: 1.4 }}>
               ⚠️ {error}

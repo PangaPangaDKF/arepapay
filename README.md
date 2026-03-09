@@ -34,7 +34,6 @@ ArepaPay resuelve ambos con una sola app: el usuario conecta su MetaMask, tiene 
 3. Ingresa el monto del cobro
 4. Muestra el QR al cliente
 5. Recibe el USDT directamente en su wallet — sin intermediario
-6. Tambien gana 1 ticket de rifa por cada pago recibido
 
 ---
 
@@ -104,7 +103,6 @@ Usuario paga a comercio
 PaymentProcessor.payMerchant()
     ├── USDT → comercio (directo, sin custodia)
     ├── RewardTicket.mint() → +1 ticket al pagador
-    ├── RewardTicket.mint() → +1 ticket al comercio
     ├── InternetVoucher.mint() → +30 min WiFi al pagador
     └── Raffle.recordTransaction() → +1 al contador de rifas
                                      (cada 10 pagos → rifa abierta, 3 ganadores)
