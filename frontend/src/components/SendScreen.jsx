@@ -332,9 +332,17 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
 
           {/* Destinatario */}
           <div>
-            <label style={{ color: "#2C1A0E", fontSize: "14px", fontWeight: "bold", display: "block", marginBottom: "8px" }}>
-              A quien le envias?
-            </label>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+              <label style={{ color: "#2C1A0E", fontSize: "14px", fontWeight: "bold" }}>
+                A quien le envias?
+              </label>
+              <button
+                style={{ background: "#1A2472", color: "white", border: "2px solid #0D1040", borderRadius: "8px", padding: "5px 12px", fontSize: "12px", fontWeight: "bold", cursor: "default", fontFamily: "Inter, sans-serif", opacity: 0.7 }}
+                disabled
+              >
+                👥 Contactos
+              </button>
+            </div>
             <input
               style={{ ...inputStyle, borderColor: to && !toValid ? "#CC2222" : "#2C1A0E" }}
               placeholder="0x... o escanea el QR del comercio"
