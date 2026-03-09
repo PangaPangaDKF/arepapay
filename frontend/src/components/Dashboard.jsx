@@ -9,6 +9,7 @@ import InternetScreen from "./InternetScreen";
 import MerchantPanel from "./MerchantPanel";
 import { MERCHANTS } from "../config/network";
 import QRScanner from "./QRScanner";
+import ErrorBoundary from "./ErrorBoundary";
 
 const CHECKER = {
   backgroundImage: [
@@ -171,7 +172,7 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
       )}
       {activeTab === "receive"   && <ReceiveScreen address={address} onBack={() => setActiveTab("home")} />}
       {activeTab === "internet"  && <InternetScreen internetMinutes={internetMinutes} provider={provider} address={address} onBack={() => setActiveTab("home")} onActivated={refetch} />}
-      {activeTab === "raffles"   && <RafflesScreen tickets={tickets} provider={provider} address={address} onBack={() => setActiveTab("home")} />}
+      {activeTab === "raffles"   && <ErrorBoundary><RafflesScreen tickets={tickets} provider={provider} address={address} onBack={() => setActiveTab("home")} /></ErrorBoundary>}
       {activeTab === "merchants" && <MerchantPanel address={address} onBack={() => setActiveTab("home")} />}
 
       {/* BODY PRINCIPAL */}
