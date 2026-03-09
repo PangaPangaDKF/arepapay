@@ -105,12 +105,15 @@ function MerchantCard({ emoji, name, category, big, coming, onClick }) {
   );
 }
 
+const BCV_RATE = 400; // Bs por 1 USDT
+
 export default function Dashboard({ address, disconnect, provider, switchChain }) {
   const { usdtBalance, arepaBalance, tickets, internetMinutes, poolBalance, loading, fetchError, refetch } = useBalances(provider, address);
   const [activeTab, setActiveTab]               = useState("home");
   const [selectedMerchant, setSelectedMerchant] = useState(null);
 
   const shortAddr = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "";
+  const bsEquivalent = loading ? null : Math.round(parseFloat(usdtBalance.replace(/\./g, "").replace(",", ".")) * BCV_RATE);
 
   return (
     <div style={{ minHeight: "100vh", maxWidth: "420px", margin: "0 auto", background: "#FFF8E0", fontFamily: "Inter, sans-serif", paddingBottom: "80px" }}>
@@ -171,6 +174,14 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
                 <span style={{ color: "#FFFFFF", fontSize: "46px", fontWeight: "900", lineHeight: 1 }}>{loading ? "—" : usdtBalance}</span>
                 <span style={{ color: "#CC1111", fontSize: "20px", fontWeight: "bold" }}>USDT</span>
               </div>
+              {!loading && bsEquivalent !== null && (
+                <p style={{ color: "#FFD84A", fontSize: "18px", fontWeight: "bold", margin: "6px 0 0 0" }}>
+                  ≈ {bsEquivalent.toLocaleString("es-VE")} Bs
+                </p>
+              )}
+              <p style={{ color: "#8899CC", fontSize: "10px", margin: "4px 0 0 0" }}>
+                Tasa BCV: {BCV_RATE} Bs/$ USDT
+              </p>
             </div>
             <div style={{ height: "8px", ...CHECKER }} />
           </div>
