@@ -56,28 +56,33 @@ export function useWallet() {
 
   useEffect(() => {
     // Browser de wallet (Core, MetaMask) — proveedor inyectado
-    if (window.ethereum) {
-      window.ethereum.request({ method: "eth_accounts" }).then(async accounts => {
-        if (accounts.length > 0) {
-          try { await switchToArepaPay(); } catch (_) { /* continúa */ }
-          setAddress(accounts[0]);
-          setProvider(new BrowserProvider(window.ethereum));
-          setConnected(true);
-        }
-      });
-      window.ethereum.on("accountsChanged", accounts => {
-        if (accounts.length > 0) {
-          setAddress(accounts[0]);
-          setProvider(new BrowserProvider(window.ethereum));
-          setConnected(true);
-        } else {
-          setAddress(null); setProvider(null); setConnected(false);
-        }
-      });
-      window.ethereum.on("chainChanged", () => {
-        setProvider(new BrowserProvider(window.ethereum));
-      });
-    }
+    // Wrapped in try-catch para manejar conflictos entre extensiones (MetaMask vs Core)
+    try {
+      if (window.ethereum) {
+        window.ethereum.request({ method: "eth_accounts" }).then(async accounts => {
+          if (accounts.length > 0) {
+            try { await switchToArepaPay(); } catch (_) { /* continúa */ }
+            setAddress(accounts[0]);
+            setProvider(new BrowserProvider(window.ethereum));
+            setConnected(true);
+          }
+        }).catch(() => { /* extensión en conflicto — usa WalletConnect */ });
+        try {
+          window.ethereum.on("accountsChanged", accounts => {
+            if (accounts.length > 0) {
+              setAddress(accounts[0]);
+              setProvider(new BrowserProvider(window.ethereum));
+              setConnected(true);
+            } else {
+              setAddress(null); setProvider(null); setConnected(false);
+            }
+          });
+          window.ethereum.on("chainChanged", () => {
+            setProvider(new BrowserProvider(window.ethereum));
+          });
+        } catch (_) { /* listeners no disponibles — usa WalletConnect */ }
+      }
+    } catch (_) { /* window.ethereum roto por conflicto de extensiones */ }
 
     // WalletConnect — Chrome externo → Core/MetaMask app
     modal.subscribeProvider(({ address, isConnected, provider }) => {
