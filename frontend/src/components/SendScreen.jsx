@@ -160,7 +160,7 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
       }
 
       setStep(STEPS.SUCCESS);
-      onSuccess?.();
+      onSuccess?.(); // refetch balances, pero NO navega (ver modal)
     } catch (e) {
       console.error(e);
       setErrorMsg(e?.reason || e?.message || "Error desconocido");

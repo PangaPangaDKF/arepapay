@@ -167,7 +167,7 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
           prefilledAmount={selectedMerchant?.amount || ""}
           switchChain={switchChain}
           onBack={() => { setActiveTab("home"); setSelectedMerchant(null); }}
-          onSuccess={() => { setActiveTab("home"); setSelectedMerchant(null); refetch(); }}
+          onSuccess={() => { refetch(); }}
         />
       )}
       {activeTab === "receive"   && <ReceiveScreen address={address} onBack={() => setActiveTab("home")} />}
