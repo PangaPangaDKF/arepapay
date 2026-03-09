@@ -9,6 +9,7 @@ import InternetScreen from "./InternetScreen";
 import MerchantPanel from "./MerchantPanel";
 import { MERCHANTS } from "../config/network";
 import ErrorBoundary from "./ErrorBoundary";
+import QRScanner from "./QRScanner";
 
 const CHECKER = {
   backgroundImage: [
@@ -111,9 +112,29 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
   const { usdtBalance, arepaBalance, tickets, internetMinutes, poolBalance, loading, fetchError, refetch } = useBalances(provider, address);
   const [activeTab, setActiveTab]               = useState("home");
   const [selectedMerchant, setSelectedMerchant] = useState(null);
+  const [showScanner, setShowScanner]           = useState(false);
 
   const shortAddr = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "";
   const bsEquivalent = loading ? null : Math.round(parseFloat(usdtBalance.replace(/\./g, "").replace(",", ".")) * BCV_RATE);
+
+  function handleQRScan(raw) {
+    setShowScanner(false);
+    try {
+      const data = JSON.parse(raw);
+      if (data.type === "arepapay" && data.to) {
+        const merchant = MERCHANTS.find(m => m.address.toLowerCase() === data.to.toLowerCase());
+        setSelectedMerchant(merchant ? { ...merchant, amount: data.amount || "" } : { address: data.to, name: data.name || "", amount: data.amount || "" });
+        setActiveTab("send");
+        return;
+      }
+    } catch (_) {}
+    setSelectedMerchant({ address: raw.trim(), name: "", amount: "" });
+    setActiveTab("send");
+  }
+
+  if (showScanner) {
+    return <QRScanner onScan={handleQRScan} onClose={() => setShowScanner(false)} />;
+  }
 
   return (
     <div style={{ minHeight: "100vh", maxWidth: "420px", margin: "0 auto", background: "#FFF8E0", fontFamily: "Inter, sans-serif", paddingBottom: "80px" }}>
@@ -198,36 +219,39 @@ export default function Dashboard({ address, disconnect, provider, switchChain }
             </div>
           </div>
 
-          {/* BOTON PAGAR */}
-          <button
-            onClick={() => { setSelectedMerchant(null); setActiveTab("send"); }}
-            style={{ width: "100%", background: "#CC1111", color: "white", border: "3px solid #8A0A0A", borderRadius: "12px", padding: "16px", fontSize: "22px", fontWeight: "900", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "5px 5px 0px #8A0A0A", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "10px", letterSpacing: "1px" }}
-          >
-            <span style={{ fontSize: "24px" }}>💸</span>
-            PAGAR
-          </button>
+          {/* BOTONES PAGAR */}
+          <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+            <button
+              onClick={() => { setSelectedMerchant(null); setActiveTab("send"); }}
+              style={{ flex: 2, background: "#CC1111", color: "white", border: "3px solid #8A0A0A", borderRadius: "12px", padding: "16px", fontSize: "20px", fontWeight: "900", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "4px 4px 0px #8A0A0A", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", letterSpacing: "1px" }}
+            >
+              <span style={{ fontSize: "22px" }}>💸</span>
+              PAGAR
+            </button>
+            <button
+              onClick={() => setShowScanner(true)}
+              style={{ flex: 1, background: "#1A2472", color: "white", border: "3px solid #0D1040", borderRadius: "12px", padding: "16px", fontSize: "13px", fontWeight: "900", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "4px 4px 0px #0D1040", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "4px" }}
+            >
+              <span style={{ fontSize: "22px" }}>📷</span>
+              QR
+            </button>
+          </div>
 
-          {/* COMERCIOS — fila horizontal */}
+          {/* COMERCIOS — 4 iguales, sin scroll */}
           <div style={{ background: "#FFFFFF", border: "3px solid #C89038", borderRadius: "12px", boxShadow: "4px 4px 0px #C89038", overflow: "hidden" }}>
             <div style={{ background: "#FFF8E0", borderBottom: "2px solid #C89038", padding: "7px 14px" }}>
               <span style={{ color: "#1A2472", fontSize: "11px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "1px" }}>Comercios</span>
             </div>
-            <div style={{ display: "flex", gap: "8px", padding: "10px 12px", overflowX: "auto" }}>
+            <div style={{ display: "flex", padding: "10px 10px" }}>
               {MERCHANTS.map(m => (
                 <button
                   key={m.id}
                   onClick={() => { setSelectedMerchant(m); setActiveTab("send"); }}
-                  style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", background: "#FFF8E0", border: "2px solid #C89038", borderRadius: "10px", padding: "8px 10px", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "2px 2px 0px #C89038", minWidth: "64px" }}
+                  style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", background: "#FFF8E0", border: "2px solid #C89038", borderRadius: "10px", padding: "8px 4px", cursor: "pointer", fontFamily: "Inter, sans-serif", boxShadow: "2px 2px 0px #C89038", margin: "0 3px" }}
                 >
-                  <span style={{ fontSize: "26px" }}>{m.emoji}</span>
-                  <span style={{ fontSize: "10px", fontWeight: "bold", color: "#2C1A0E", textAlign: "center" }}>{m.name.split(" ")[0]}</span>
+                  <span style={{ fontSize: "24px" }}>{m.emoji}</span>
+                  <span style={{ fontSize: "9px", fontWeight: "bold", color: "#2C1A0E", textAlign: "center" }}>{m.name.split(" ")[0]}</span>
                 </button>
-              ))}
-              {[{ emoji: "🎂", name: "Tortas" }, { emoji: "🍦", name: "Helados" }].map(c => (
-                <div key={c.name} style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", background: "#F0F0F0", border: "2px solid #CCC", borderRadius: "10px", padding: "8px 10px", minWidth: "64px", opacity: 0.5 }}>
-                  <span style={{ fontSize: "26px" }}>{c.emoji}</span>
-                  <span style={{ fontSize: "9px", fontWeight: "bold", color: "#999", textAlign: "center" }}>Pronto</span>
-                </div>
               ))}
             </div>
           </div>
