@@ -34,7 +34,7 @@ export function useBalances(provider, address) {
       ]);
 
       setUsdtBalance(parseFloat(formatUnits(rawUsdt,   18)).toLocaleString("es-VE", { minimumFractionDigits: 0, maximumFractionDigits: 0 }));
-      setArepaBalance(parseFloat(formatUnits(rawNative, 18)).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 4 }));
+      setArepaBalance(parseFloat(formatUnits(rawNative, 18)).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
       setTickets(Number(rawTickets));
       setInternetMinutes(Number(rawMinutes));
       setPoolBalance(parseFloat(formatUnits(rawPool, 18)));

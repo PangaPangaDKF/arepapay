@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Contract, parseUnits, isAddress, JsonRpcProvider } from "ethers";
 import PixelButton from "./PixelButton";
 import QRScanner from "./QRScanner";
-import { NETWORK } from "../config/network";
+import { NETWORK, MERCHANTS } from "../config/network";
 
 const USDT_ABI = [
   "function transfer(address to, uint256 amount) returns (bool)",
@@ -69,6 +69,7 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
   const [merchantName, setMerchantName]   = useState(prefilledName);
   const [isMerchantPay, setIsMerchantPay] = useState(false);
   const [checkingMerchant, setCheckingMerchant] = useState(false);
+  const [showContacts, setShowContacts]   = useState(false);
 
   // Verificar red al abrir
   useEffect(() => {
@@ -337,15 +338,34 @@ export default function SendScreen({ provider, address, usdtBalance, onBack, onS
                 A quien le envias?
               </label>
               <button
-                style={{ background: "#1A2472", color: "white", border: "2px solid #0D1040", borderRadius: "8px", padding: "5px 12px", fontSize: "12px", fontWeight: "bold", cursor: "default", fontFamily: "Inter, sans-serif", opacity: 0.7 }}
-                disabled
+                onClick={() => setShowContacts(v => !v)}
+                style={{ background: "#1A2472", color: "white", border: "2px solid #0D1040", borderRadius: "8px", padding: "5px 12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", fontFamily: "Inter, sans-serif" }}
               >
                 👥 Contactos
               </button>
             </div>
+
+            {showContacts && (
+              <div style={{ background: "#FFF8E8", border: "2px solid #C89038", borderRadius: "8px", marginBottom: "8px", overflow: "hidden" }}>
+                {MERCHANTS.map(m => (
+                  <button
+                    key={m.id}
+                    onClick={() => { setTo(m.address); setMerchantName(m.name); setShowContacts(false); }}
+                    style={{ width: "100%", display: "flex", alignItems: "center", gap: "10px", padding: "10px 14px", background: "transparent", border: "none", borderBottom: "1px solid #E8D8A0", cursor: "pointer", fontFamily: "Inter, sans-serif", textAlign: "left" }}
+                  >
+                    <span style={{ fontSize: "22px" }}>{m.emoji}</span>
+                    <div>
+                      <p style={{ color: "#2C1A0E", fontWeight: "bold", fontSize: "13px", margin: 0 }}>{m.name}</p>
+                      <p style={{ color: "#8899CC", fontSize: "10px", margin: 0, fontFamily: "monospace" }}>{m.address.slice(0, 10)}...{m.address.slice(-6)}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
             <input
               style={{ ...inputStyle, borderColor: to && !toValid ? "#CC2222" : "#2C1A0E" }}
-              placeholder="0x... o escanea el QR del comercio"
+              placeholder="0x..."
               value={to}
               onChange={e => { setTo(e.target.value.trim()); setMerchantName(""); }}
             />
