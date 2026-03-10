@@ -35,8 +35,6 @@ Inspirado en "quests" de protocolos DeFi y plataformas de gaming.
 |--------|-----------|--------------|
 | Seguir @ArepaPay en X/Twitter | 2 tickets | Manual / OAuth |
 | Hacer un post sobre ArepaPay con #ArepaPay | 5 tickets | Manual |
-| Referir a un amigo (que haga su primer pago) | 10 tickets | On-chain: referral code |
-
 ### Misiones en Avalanche (on-chain verificables)
 | Misión | Recompensa | Verificación |
 |--------|-----------|--------------|
@@ -60,23 +58,41 @@ Inspirado en "quests" de protocolos DeFi y plataformas de gaming.
 
 ---
 
-## 🌐 Subnet Propia de ArepaPay
+## 🌐 ArepaSubnet — Red Privada de Pagos
 
-**Idea:** Crear una Avalanche L1 (subnet) donde AREPA Token sea el gas nativo.
-Esto elimina la barrera de "necesito AVAX para pagar gas."
+**Idea:** Crear una Avalanche L1 (subnet) propia con modelo de fees similar al bancario, pero con redistribucion total de ganancias al ecosistema.
 
-**Beneficios:**
-- Gas gratis para usuarios (patrocinado por el protocolo)
+**Modelo de fees (correcto):**
+- Las transacciones NO son gratis — se cobra el mismo % que los bancos venezolanos (~0.5-1.5%)
+- Fee cobrado en USDT (no en AREPA)
+- La diferencia con un banco: el fee se redistribuye completamente al ecosistema
+
+```
+Distribucion del fee por transaccion:
+  30% → Validadores de la subnet (seguridad de red)
+  30% → Merchant LPs y stakers (recompensa por proveer liquidez)
+  40% → Pool de premios (rifas, vouchers, incentivos a usuarios)
+```
+
+**AREPA Token — rol en la subnet:**
+- Token de staking para validadores y Merchant LPs
+- Governance: votar cambios de parametros del protocolo
+- DAT: el protocolo recompra AREPA en el mercado con % de los fees de red (presion de demanda organica)
+- El gas se paga en USDT, no en AREPA
+
+**Beneficios del modelo:**
 - Control total sobre validadores y reglas de la red
-- Posibilidad de KYC selectivo a nivel de validador sin afectar la privacidad del usuario
-- Fee model propio: ArepaPay cobra en AREPA y quema parte para deflación
+- Fees economicos pero no gratis — modelo financiero sostenible
+- Comerciantes y stakers reciben retorno por participar
+- Usuarios reciben parte del fee como premios y vouchers
+- KYC selectivo a nivel de validador sin afectar privacidad del usuario final
 
 **Pasos para implementar:**
-1. Adquirir validadores Avalanche (staking mínimo)
+1. Adquirir validadores Avalanche (staking minimo)
 2. Configurar la subnet con Avalanche-CLI
-3. Deployar los contratos en la subnet propia
+3. Deployar contratos con el nuevo fee model en USDT
 4. Actualizar el frontend para conectar a la nueva chain
-5. Campaña de distribución de AREPA para que usuarios tengan gas
+5. Distribucion inicial de AREPA para bootstrap de stakers y validadores
 
 **Dificultad:** Muy Alta — requiere infraestructura, validadores y fondos para staking
 
@@ -112,19 +128,57 @@ Actualmente los comercios se registran manualmente via script del admin.
 
 ---
 
-## 💱 On-Ramp Local (VES → USDT)
+## 💱 Merchant Liquidity Provider (MLP) — La Rampa de Liquidez
 
-**Idea:** Integrar un sistema donde el usuario pueda comprar USDT directamente
-dentro de la app usando bolívares (transferencia bancaria venezolana).
+**Idea:** Los comerciantes verificados de ArepaPay actuan como proveedores de liquidez (LPs).
+No hay una casa de cambio centralizada — el pool lo mantienen los propios comerciantes de la red.
+En Venezuela el USDT y las criptomonedas son de uso libre y legal, por lo que esta operacion
+entre participantes privados de una red no tiene restricciones regulatorias.
 
-**Mecanismo:**
-- ArepaPay actúa como P2P local: comprador envía Bs a cuenta del vendedor
-- LiquidityManager libera el USDT equivalente al wallet del comprador
-- Requiere reservas de USDT en el LiquidityManager
-- Tasa = BCV del día + pequeño spread para el protocolo
+**Sistema de tres tasas (contexto Venezuela):**
+```
+Tasa BCV oficial:  400 Bs/$  — referencia del gobierno
+Tasa de subasta:   515 Bs/$  — subastas del sistema bancario (DICOM)
+Tasa paralela:     620 Bs/$  — mercado informal libre
+```
 
-**Riesgo:** Regulatorio — operación similar a casa de cambio, requiere análisis legal
-**Dificultad:** Alta — requiere integración bancaria, gestión de reservas, KYC
+**Ciclo completo del MLP:**
+
+Paso 1 — El comercio acumula USDT
+El comercio recibe USDT de sus ventas diarias via PaymentProcessor.
+No necesita convertirlo al instante — lo acumula en su wallet.
+
+Paso 2 — El comercio vende USDT al LiquidityManager
+Cuando el comercio necesita bolivares (para pagar proveedores, empleados, alquiler),
+vende su USDT al LiquidityManager a la tasa de subasta (515 Bs/$).
+El volumen que puede vender esta limitado a su historial de ventas verificadas on-chain
+(evita manipulacion del pool por parte de actores externos).
+
+Ganancia del comercio: recibe 515 Bs/$ en vez de 400 (BCV oficial) = +28.75% mas VES
+sin depender de Binance, Airtm ni casas de cambio informales.
+
+Paso 3 — El Proveedor de Liquidez arbitra con el excedente
+El LiquidityManager (o un agente de IA conectado al contrato) opera el USDT recibido:
+  → Vende en el mercado paralelo a ~620 Bs/$
+  → Margen de arbitraje: (620-515)/515 = ~20% de ganancia
+  → Con esa ganancia recompra USDT en el mercado
+  → Reinyecta el USDT al pool — el ciclo se financia solo
+
+El agente puede ser un smart contract con logica de orden limite, un bot de IA que
+monitorea tasas en tiempo real, o una combinacion de ambos.
+
+Paso 4 — Usuario nuevo accede a USDT desde el pool
+Usuario transfiere VES a la cuenta bancaria del MLP verificado (paso off-chain).
+LiquidityManager.release() envia USDT al wallet del usuario a una tasa preferencial
+(entre BCV y subasta, ej: 450 Bs/$).
+El usuario obtiene USDT a 450 Bs/$ vs 620 en el mercado = ahorro del ~27%.
+
+**Contratos necesarios:**
+- `LiquidityManager.sol` extendido con: `stake()`, `release()`, `setMerchantCap(address, limit)`
+- Oraculo de tasas (BCV + subasta) con actualizacion por multisig o feed externo
+
+**Riesgo:** Bajo — Venezuela permite operaciones con USDT entre privados libremente
+**Dificultad:** Alta — requiere oracle de tasas, logica de caps por comercio, agente de arbitraje
 
 ---
 

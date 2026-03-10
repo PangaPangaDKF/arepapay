@@ -145,10 +145,13 @@ arepapay-clean/
 - Sorteo automatico con Chainlink VRF
 - Staking de comerciantes para proveer liquidez
 
-### Fase 4
-- Subnet propia de ArepaPay (AREPA como gas, transacciones gratis para usuarios)
-- On-ramp fiat → USDT con proveedores locales
-- Modelo DAT: recompra de tokens AREPA con fees de red
+### Fase 4 — ArepaSubnet
+- Red privada en Avalanche con fees economicos — mismo porcentaje que los bancos (no gratis), cobrados en USDT
+- Redistribucion del fee: 30% validadores / 30% Merchant LPs y stakers / 40% premios y vouchers a usuarios
+- Merchant Liquidity Provider (MLP): los comercios verificados proveen liquidez USDT al pool y reciben bolivares a tasa de subasta bancaria (~515 Bs/$), mejor que la tasa oficial BCV (400 Bs/$)
+- El protocolo arbitra entre tasa de subasta y paralelo (~20% margen) via agente de IA o smart contract para reponer el pool de forma autosustentable
+- AREPA Token: staking de validadores, staking de LPs, governance del protocolo, y DAT (recompra de AREPA con % de fees de red para demanda organica)
+- ArepaPay Wallet SDK (WDK): wallet EVM embebida, usuarios crean su cuenta sin MetaMask ni apps externas
 
 ---
 
